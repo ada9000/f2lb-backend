@@ -14,6 +14,7 @@ app.use(cors())
 
 const blockfrost = require('./api/blockfrost')
 const redis = require('./db/redis')
+const { getGooglesheetData } = require('./util/googlesheetsToJson')
 
 const PoolType = new GraphQLObjectType({
   name: 'Pool',
@@ -22,6 +23,7 @@ const PoolType = new GraphQLObjectType({
     poolId: { type: new GraphQLNonNull(GraphQLString) },
     poolIdBech32: { type: new GraphQLNonNull(GraphQLString) },
     ticker: { type: new GraphQLNonNull(GraphQLString) },
+    description: { type: new GraphQLNonNull(GraphQLString) },
     website: { type: new GraphQLNonNull(GraphQLString) },
     imageUrl: { type: new GraphQLNonNull(GraphQLString) },
     epochs: { type: new GraphQLList(GraphQLString) },
@@ -65,12 +67,17 @@ app.use('/graphql', graphqlHTTP({
 async function initServer()
 {
   console.log("Init server");
-  await blockfrost.todo();
+  //await blockfrost.getStakeInfo("stake1uxh85e3y330pj3fx8y8dgje94pam5zklj9x3zaxz6fztqmq03a8jr")
+  const forceUpdateFromGoogleSheet = false
+  if (await redis.get("pools") === null || forceUpdateFromGoogleSheet)
+  {
+    await getGooglesheetData()
+  }
 }
 
 initServer().then(() => {
   app.listen(4000, () => {
-    console.log('Server Running, localhost:4000')
+    console.log('Server Running, http://localhost:4000/graphql')
   })
   // update data every minute
   console.log("Setting 1min update job")
