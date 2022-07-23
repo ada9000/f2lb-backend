@@ -89,9 +89,9 @@ async function getGooglesheetData(){
         const pool = {
             poolIdBech32:poolId,
             ticker:ticker,
-            website:website ? website : undefined,
-            imageUrl:image ? image : undefined,
-            description:description ? description : undefined,
+            website:website ? website : '',
+            imageUrl:image ? image : '',
+            description:description ? description : '',
             epochs:epochs,
         }
         pools.push(pool)
