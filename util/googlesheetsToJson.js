@@ -31,6 +31,7 @@ async function getGooglesheetData(){
     const currentEpoch = await getEpoch()
     const poolList = await getAllPools().then(d => {return d});
     var targetEpoch = parseInt(currentEpoch.epoch);
+    var index = 0
     for(row in gSheetData){
         const stakeHex = gSheetData[row][8];
         const stakeAddressDecoded = 'e1' + stakeHex;
@@ -93,8 +94,11 @@ async function getGooglesheetData(){
             imageUrl:image ? image : '',
             description:description ? description : '',
             epochs:epochs,
+            numEpochs:epochs.length,
+            queuePos:index,
         }
         pools.push(pool)
+        index += 1
         console.log(`finshed processing import for ${ticker} with epochs ${epochs}`)
     }
     redis.set("pools", JSON.stringify(pools))

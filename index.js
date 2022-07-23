@@ -26,7 +26,9 @@ const PoolType = new GraphQLObjectType({
     description: { type: new GraphQLNonNull(GraphQLString) },
     website: { type: new GraphQLNonNull(GraphQLString) },
     imageUrl: { type: new GraphQLNonNull(GraphQLString) },
-    epochs: { type: new GraphQLList(GraphQLString) },
+    epochs: { type: new GraphQLList(GraphQLInt) },
+    numEpochs: { type: new GraphQLNonNull(GraphQLInt) },
+    queuePos: { type: new GraphQLNonNull(GraphQLInt) },
   })
 })
 
