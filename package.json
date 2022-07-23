@@ -1,0 +1,32 @@
+{
+  "name": "F2LB backend",
+  "version": "1.0.0",
+  "description": "The backend for first to lifetime block",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixel-pool/f2lb-backend"
+  },
+  "author": "jack-0",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pixel-pool/f2lb-backend/issues"
+  },
+  "homepage": "https://github.com/pixel-pool/f2lb-backend#readme",
+  "dependencies": {
+    "@blockfrost/blockfrost-js": "^4.1.0",
+    "@graphql-tools/graphql-file-loader": "^7.3.15",
+    "@graphql-tools/load": "^7.5.14",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-graphql": "^0.12.0",
+    "express-redis-cache": "^1.1.3",
+    "graphql": "^16.5.0",
+    "nodemon": "^2.0.16",
+    "redis": "^4.1.0"
+  }
+}
