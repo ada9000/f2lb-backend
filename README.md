@@ -13,3 +13,6 @@ Ensure you have met the requirements.
 * in .env change YOUR_API_KEY_HERE to your https://blockfrost.io/dashboard mainnet key 
 * yarn install
 * yarn start
+
+# Notes
+* to get data from current f2lb use the command ```node scripts/googlesheetsToJson.js``` (I plan to deprecate this ASAP)

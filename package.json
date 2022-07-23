@@ -1,5 +1,5 @@
 {
-  "name": "F2LB backend",
+  "name": "f2lb-backend",
   "version": "1.0.0",
   "description": "The backend for first to lifetime block",
   "main": "index.js",
@@ -20,6 +20,7 @@
     "@blockfrost/blockfrost-js": "^4.1.0",
     "@graphql-tools/graphql-file-loader": "^7.3.15",
     "@graphql-tools/load": "^7.5.14",
+    "axios": "^0.27.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
