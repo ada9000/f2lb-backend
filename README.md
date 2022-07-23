@@ -9,7 +9,7 @@ First you must install redis (debian example)
 
 # Build
 Ensure you have met the requirements. 
-* cp .env.example .env
+* ```cp .env.example .env```
 * in .env change YOUR_API_KEY_HERE to your https://blockfrost.io/dashboard mainnet key 
 * yarn install
 * yarn start
