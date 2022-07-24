@@ -1,7 +1,37 @@
+const redis = require('../db/redis')
+
 async function requirmentsMeet(){
     // pool must have less than 50 lifetime blocks or less than 1 mill to enter queue 
     // (don't forget to minus Cardano foundation?)
     // return true / false
+}
+
+async function updateLeader(){
+    // get all pools
+    console.log("update leader")
+    const poolList = JSON.parse(await redis.get('pools'))
+
+    for(idx in poolList){
+        const pool = JSON.parse(await redis.get(poolList[idx]))
+        if (pool.queuePos === 0){
+            console.log(`${pool.ticker} is leader`)
+            await redis.set('leader', JSON.stringify(pool))
+            return
+        }
+        console.log('no leader found')
+    }
+}
+
+async function setStatus(pool){
+    const leader = JSON.parse(await redis.get('leader'))
+    
+    var updatePool = JSON.parse(JSON.stringify(pool))
+    var status = 1
+    if (leader.poolIdBech32 === pool.wallet.delegation){
+        status = 0
+    }
+    updatePool.status = status;
+    await redis.set(pool.poolIdBech32, JSON.stringify(updatePool))
 }
 
 async function balance(){
@@ -38,4 +68,4 @@ async function handleAddOn(){
     // TODO think about this more
 }
 
-module.exports = {requirmentsMeet, balance, listUpdate, requeue, inactive, handleAddOn}
+module.exports = {requirmentsMeet, updateLeader, setStatus, balance, listUpdate, requeue, inactive, handleAddOn}
