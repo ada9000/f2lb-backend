@@ -13,7 +13,6 @@ const cors = require('cors')
 const app = express()
 app.use(cors())
 
-const blockfrost = require('./api/blockfrost')
 const redis = require('./db/redis')
 const { getGooglesheetData } = require('./util/googlesheetsToJson')
 
@@ -44,7 +43,6 @@ const WalletType = new GraphQLObjectType({
     delegation: { type: new GraphQLNonNull(GraphQLString) },
   })
 })
-
 
 const RootQueryType = new GraphQLObjectType({
   name: 'Query',
@@ -83,7 +81,6 @@ app.use('/graphql', graphqlHTTP({
 async function initServer()
 {
   console.log("Init server");
-  //await blockfrost.getStakeInfo("stake1uxh85e3y330pj3fx8y8dgje94pam5zklj9x3zaxz6fztqmq03a8jr")
   const forceUpdateFromGoogleSheet = false
   if (await redis.get("pools") === null || forceUpdateFromGoogleSheet)
   {

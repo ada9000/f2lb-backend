@@ -1,24 +1,12 @@
 //const fetch = require("node-fetch");
 const axios = require('axios');
 const dotenv = require("dotenv")
-const blockfrost = require('@blockfrost/blockfrost-js');
-const {getEpoch} = require('../api/blockfrost')
+const koios = require('../api/koios')
 dotenv.config()
 const GOOGLE_API = process.env.GOOGLE_API
 const {bech32} = require('bech32');
 const redis = require('../db/redis')
 
-async function getAllPools(offset=0, data=[]){
-    return await axios(`https://api.koios.rest/api/v0/pool_list?offset=${offset}&limit=900`)
-    .then(res => {
-        if (res.data.length > 0){
-            data.push(...res.data);
-            console.log(`GET https://api.koios.rest/api/v0/pool_list?offset=${offset}&limit=900`);
-            return getAllPools(offset + 900, data);
-        }
-        return data
-    }).catch(e => {console.log(e)})
-}
 
 async function getGooglesheetData(){
     console.log("Recovering data from googlesheet. Try again on error...")
@@ -29,9 +17,9 @@ async function getGooglesheetData(){
         const rows = res.data.values.slice(15);
         return rows
     })
-    const currentEpoch = await getEpoch()
-    const poolList = await getAllPools().then(d => {return d});
-    var targetEpoch = parseInt(currentEpoch.epoch);
+    const currentEpoch = await koios.epoch()
+    const poolList = await koios.pools().then(d => {return d});
+    var targetEpoch = parseInt(currentEpoch);
     var index = 0
     for(row in gSheetData){
         const stakeHex = gSheetData[row][8];
@@ -62,19 +50,11 @@ async function getGooglesheetData(){
             console.log(`🐛 ${ticker}`)
             poolId = "pool1xpfe5q3v3axrjdc8h38taaa93frq3m9pfewxk46x4r6jgy2yj5n"
         }
-        else if(ticker.toUpperCase() === "ASTCH"){ // handle edge case
-            console.log(`🐛 ${ticker}`)
-            poolID = "pool1q2fh3cl6rx0wv5gry4qx5l4h65qpjf7x99xmq66nqj2fj5g6u9z"
-        }
         else {
-            throw `Pool not found with ${ticker} when using https://api.koios.rest/api/v0/pool_list`;
+            throw `Pool not found with ${ticker} when using https://api.koios.rest/api/v0/pool_list (retry)`;
         }
         // get metadata
-        const poolMeta = await axios.post(`https://api.koios.rest/api/v0/pool_metadata`,{
-            "_pool_bech32_ids":[
-                poolId
-            ]
-        }).then(res => {return  res.data })
+        const poolMeta = await  koios.poolMeta(poolId);
         const website = poolMeta[0].meta_json ? poolMeta[0].meta_json.homepage : null;
         const description = poolMeta[0].meta_json ? poolMeta[0].meta_json.description : null;
         const metaUrl = poolMeta[0].meta_url;
@@ -89,7 +69,7 @@ async function getGooglesheetData(){
         const image = extendedMeta ? extendedMeta.info.url_png_logo : null;
 
         // get wallet info
-        const accountInfo = await axios(`https://api.koios.rest/api/v0/account_info?_address=${bech32StakeAddress}`).then(res => {return res.data})
+        const accountInfo = await koios.accountInfo(bech32StakeAddress);
         const laceAmount = parseInt(accountInfo[0].total_balance);
         const delegation = accountInfo[0].delegated_pool;
 

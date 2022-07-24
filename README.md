@@ -10,9 +10,11 @@ First you must install redis (debian example)
 # Build
 Ensure you have met the requirements. 
 * ```cp .env.example .env```
-* in .env change YOUR_API_KEY_HERE to your https://blockfrost.io/dashboard mainnet key 
+* in .env change YOUR_API_KEY_HERE to your [google api key](https://developers.google.com/sheets/api/guides/authorizing#APIKey)
+* note the google api key may need [activating](https://console.cloud.google.com/apis/api/sheets.googleapis.com/)
 * yarn install
 * yarn start
 
 # Notes
-* to get data from current f2lb use the command ```node scripts/googlesheetsToJson.js``` (I plan to deprecate this ASAP)
+* To get data from current f2lb use the command ```node scripts/googlesheetsToJson.js``` (I plan to deprecate this ASAP)
+* Due to the use of a google sheet we need to use a google API key to scrape the data
