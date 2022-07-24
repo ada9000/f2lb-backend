@@ -6,7 +6,8 @@ const {
   GraphQLString,
   GraphQLList,
   GraphQLInt,
-  GraphQLNonNull
+  GraphQLFloat,
+  GraphQLNonNull,
 } = require('graphql')
 const cors = require('cors')
 const app = express()
@@ -29,8 +30,21 @@ const PoolType = new GraphQLObjectType({
     epochs: { type: new GraphQLList(GraphQLInt) },
     numEpochs: { type: new GraphQLNonNull(GraphQLInt) },
     queuePos: { type: new GraphQLNonNull(GraphQLInt) },
+    status: {type:new GraphQLNonNull(GraphQLInt)},
+    wallet: {type: WalletType}
   })
 })
+
+const WalletType = new GraphQLObjectType({
+  name: 'Wallet',
+  description: 'Represents a bit_bot payloads',
+  fields: () => ({
+    stakeAddress: { type: new GraphQLNonNull(GraphQLString) },
+    amount: { type: new GraphQLNonNull(GraphQLFloat) },
+    delegation: { type: new GraphQLNonNull(GraphQLString) },
+  })
+})
+
 
 const RootQueryType = new GraphQLObjectType({
   name: 'Query',
@@ -75,6 +89,15 @@ async function initServer()
   {
     await getGooglesheetData()
   }
+  await redis.save()
+}
+
+async function update()
+{
+  console.log("update job")
+  // check and update wallets
+
+  // check epoch, if it change update list
 }
 
 initServer().then(() => {
@@ -83,7 +106,7 @@ initServer().then(() => {
   })
   // update data every minute
   console.log("Setting 1min update job")
-  //setInterval(updatePools, 60000)
+  setInterval(update, 60000)
 })
 
 

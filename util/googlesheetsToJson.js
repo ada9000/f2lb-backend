@@ -13,7 +13,7 @@ async function getAllPools(offset=0, data=[]){
     .then(res => {
         if (res.data.length > 0){
             data.push(...res.data);
-            console.log(`${offset} with len ${res.data.length} last ${JSON.stringify(data[data.length-1])}`);
+            console.log(`GET https://api.koios.rest/api/v0/pool_list?offset=${offset}&limit=900`);
             return getAllPools(offset + 900, data);
         }
         return data
@@ -21,6 +21,7 @@ async function getAllPools(offset=0, data=[]){
 }
 
 async function getGooglesheetData(){
+    console.log("Recovering data from googlesheet. Try again on error...")
     var pools = []
     const gSheetData = await axios(`https://sheets.googleapis.com/v4/spreadsheets/1-mA8vY0ZtzlVdH4XA5-J4nIZo4qFR_vFbnBFkpMLlYo/values/MainQueue?key=${GOOGLE_API}`)
     .then(res => {
@@ -86,6 +87,12 @@ async function getGooglesheetData(){
             extendedMeta = await axios(meta.extended).then(res => {return res.data});
         }catch(e){};
         const image = extendedMeta ? extendedMeta.info.url_png_logo : null;
+
+        // get wallet info
+        const accountInfo = await axios(`https://api.koios.rest/api/v0/account_info?_address=${bech32StakeAddress}`).then(res => {return res.data})
+        const laceAmount = parseInt(accountInfo[0].total_balance);
+        const delegation = accountInfo[0].delegated_pool;
+
         // create pool json
         const pool = {
             poolIdBech32:poolId,
@@ -96,10 +103,16 @@ async function getGooglesheetData(){
             epochs:epochs,
             numEpochs:epochs.length,
             queuePos:index,
+            status: 0,
+            wallet:{
+                stakeAddress: bech32StakeAddress,
+                amount: laceAmount,
+                delegation: delegation,
+            }
         }
         pools.push(pool)
         index += 1
-        console.log(`finshed processing import for ${ticker} with epochs ${epochs}`)
+        console.log(`\nFinshed processing import for ${ticker}\n\tEpochs [${epochs}]\n\tLace '${laceAmount}'\n\tDelegated to ${delegation}`)
     }
     redis.set("pools", JSON.stringify(pools))
     return pools;
