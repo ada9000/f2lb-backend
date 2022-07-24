@@ -26,4 +26,10 @@ async function del(key)
     return await client.del(key)
 }
 
-module.exports = {set, get, del};
+// manual save
+async function save() 
+{
+    await client.save()
+}
+
+module.exports = {set, get, del, save};
