@@ -14,6 +14,7 @@ const app = express()
 app.use(cors())
 
 const redis = require('./db/redis')
+const f2lb = require('./controllers/f2lbRules')
 const { getGooglesheetData } = require('./util/googlesheetsToJson')
 
 const PoolType = new GraphQLObjectType({
@@ -41,6 +42,7 @@ const WalletType = new GraphQLObjectType({
     stakeAddress: { type: new GraphQLNonNull(GraphQLString) },
     amount: { type: new GraphQLNonNull(GraphQLFloat) },
     delegation: { type: new GraphQLNonNull(GraphQLString) },
+    delegationTicker: { type: new GraphQLNonNull(GraphQLString) },
   })
 })
 
@@ -52,7 +54,12 @@ const RootQueryType = new GraphQLObjectType({
       type: new GraphQLList(PoolType),
       description: 'All pools in rotation',
       resolve: async () => {
-        return JSON.parse(await redis.get('pools'))
+        const poolList = JSON.parse(await redis.get('pools'))
+        var pools = []
+        for (idx in poolList){
+          pools.push(JSON.parse(await redis.get(poolList[idx])))
+        }
+        return pools;
       }
     },
     pool: {
@@ -62,8 +69,15 @@ const RootQueryType = new GraphQLObjectType({
         ticker: { type: GraphQLString }
       },
       resolve: async (parent, args) => {
-        const pools = JSON.parse(await redis.get('pools'))
-        return pools.find(p => p.ticker === args.ticker)
+        const poolList = JSON.parse(await redis.get('pools'))
+        for (idx in poolList){
+          const pool = JSON.parse(await redis.get(poolList[idx]))
+          console.log(`${pool.ticker} ${args.ticker}`)
+          if (pool.ticker === args.ticker){
+            return pool
+          }
+        }
+        return null
       }
     },
   })
@@ -91,9 +105,16 @@ async function initServer()
 
 async function update()
 {
-  console.log("update job")
-  // check and update wallets
+  const poolList = JSON.parse(await redis.get('pools'))
+  console.log("update leader")
+  await f2lb.updateLeader();
+  for(idx in poolList){
+    const pool = JSON.parse(await redis.get(poolList[idx]))
+    console.log("update status")
+    await f2lb.setStatus(pool)
+  }
 
+  console.log("done")
   // check epoch, if it change update list
 }
 
@@ -102,8 +123,9 @@ initServer().then(() => {
     console.log('Server Running, http://localhost:4000/graphql')
   })
   // update data every minute
+  update()
   console.log("Setting 1min update job")
-  setInterval(update, 60000)
+  //setInterval(update, 60000)
 })
 
 

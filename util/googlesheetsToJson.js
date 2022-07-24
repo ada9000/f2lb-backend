@@ -73,6 +73,9 @@ async function getGooglesheetData(){
         const laceAmount = parseInt(accountInfo[0].total_balance);
         const delegation = accountInfo[0].delegated_pool;
 
+        const delegationTicker = await koios.poolMeta(delegation)
+        .then(res => { return res[0].meta_json.ticker });
+
         // create pool json
         const pool = {
             poolIdBech32:poolId,
@@ -88,11 +91,13 @@ async function getGooglesheetData(){
                 stakeAddress: bech32StakeAddress,
                 amount: laceAmount,
                 delegation: delegation,
+                delegationTicker: delegationTicker,
             }
         }
-        pools.push(pool)
+        redis.set(poolId, JSON.stringify(pool))
+        pools.push(poolId)
         index += 1
-        console.log(`\nFinshed processing import for ${ticker}\n\tEpochs [${epochs}]\n\tLace '${laceAmount}'\n\tDelegated to ${delegation}`)
+        console.log(`\nFinshed processing import for ${ticker}\n\tEpochs [${epochs}]\n\tLace '${laceAmount}'\n\tDelegated to ${delegationTicker}`)
     }
     redis.set("pools", JSON.stringify(pools))
     return pools;
