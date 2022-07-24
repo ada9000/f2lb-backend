@@ -8,17 +8,14 @@ async function requirmentsMeet(){
 
 async function updateLeader(){
     // get all pools
-    console.log("update leader")
     const poolList = JSON.parse(await redis.get('pools'))
 
     for(idx in poolList){
         const pool = JSON.parse(await redis.get(poolList[idx]))
         if (pool.queuePos === 0){
-            console.log(`${pool.ticker} is leader`)
             await redis.set('leader', JSON.stringify(pool))
             return
         }
-        console.log('no leader found')
     }
 }
 
