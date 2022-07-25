@@ -7,8 +7,46 @@ const GOOGLE_API = process.env.GOOGLE_API
 const {bech32} = require('bech32');
 const redis = require('../db/redis')
 
+async function findSupporters(){
+    console.log("Recovering supporters from googlesheet")
+    const gSheetData = await axios(`https://sheets.googleapis.com/v4/spreadsheets/1-mA8vY0ZtzlVdH4XA5-J4nIZo4qFR_vFbnBFkpMLlYo/values/F2LB-Supporters?key=${GOOGLE_API}`)
+    .then(res => {
+        return res.data.values.slice(1);
+    })
+    console.log(gSheetData)
 
-async function getGooglesheetData(){
+    var supporters = []
+    for (row in gSheetData)
+    {
+        const alias = gSheetData[row][0];
+        const bech32StakeAddress = gSheetData[row][2];
+        console.log(alias)
+        console.log(bech32StakeAddress)
+        // get wallet data
+        const accountInfo = await koios.accountInfo(bech32StakeAddress);
+        const laceAmount = parseInt(accountInfo[0].total_balance);
+        const delegation = accountInfo[0].delegated_pool;
+
+        const delegationTicker = await koios.poolMeta(delegation)
+        .then(res => { return res[0].meta_json.ticker });
+
+        const supporter = {
+            alias: alias,
+            status: 0,
+            wallet:{
+                stakeAddress: bech32StakeAddress,
+                amount: laceAmount,
+                delegation: delegation,
+                delegationTicker: delegationTicker,
+            }
+        }
+        console.log(`adding supporter ${alias} with wallet ${laceAmount}`)
+        supporters.push(supporter)
+    }
+    redis.set('supporters', JSON.stringify(supporters))
+}
+
+async function findCurrentList(){
     console.log("Recovering data from googlesheet. Try again on error...")
     var pools = []
     const gSheetData = await axios(`https://sheets.googleapis.com/v4/spreadsheets/1-mA8vY0ZtzlVdH4XA5-J4nIZo4qFR_vFbnBFkpMLlYo/values/MainQueue?key=${GOOGLE_API}`)
@@ -103,4 +141,4 @@ async function getGooglesheetData(){
     return pools;
 }
 
-module.exports = {getGooglesheetData};
+module.exports = {findSupporters, findCurrentList};

@@ -15,13 +15,23 @@ app.use(cors())
 
 const redis = require('./db/redis')
 const f2lb = require('./controllers/f2lbRules')
-const { getGooglesheetData } = require('./util/googlesheetsToJson')
+const { findSupporters, findCurrentList } = require('./util/googlesheetsToJson')
+
+const SupporterType = new GraphQLObjectType({
+name: 'Supporter',
+  description: 'A F2LB supporter',
+  fields: () => ({
+    alias: { type: new GraphQLNonNull(GraphQLString)},
+    status: {type:new GraphQLNonNull(GraphQLInt)},
+    wallet: {type: WalletType}
+  })
+})
+
 
 const PoolType = new GraphQLObjectType({
   name: 'Pool',
-  description: 'Represents a bit_bot payloads',
+  description: 'A F2LB pool',
   fields: () => ({
-    poolId: { type: new GraphQLNonNull(GraphQLString) },
     poolIdBech32: { type: new GraphQLNonNull(GraphQLString) },
     ticker: { type: new GraphQLNonNull(GraphQLString) },
     description: { type: new GraphQLNonNull(GraphQLString) },
@@ -37,7 +47,7 @@ const PoolType = new GraphQLObjectType({
 
 const WalletType = new GraphQLObjectType({
   name: 'Wallet',
-  description: 'Represents a bit_bot payloads',
+  description: 'A Cardano wallet',
   fields: () => ({
     stakeAddress: { type: new GraphQLNonNull(GraphQLString) },
     amount: { type: new GraphQLNonNull(GraphQLFloat) },
@@ -80,6 +90,13 @@ const RootQueryType = new GraphQLObjectType({
         return null
       }
     },
+    supporters: {
+      type: new GraphQLList(SupporterType),
+      description: 'F2LB supporters',
+      resolve: async () => {
+        return JSON.parse(await redis.get('supporters'))
+      }
+    },
   })
 })
 
@@ -98,7 +115,8 @@ async function initServer()
   const forceUpdateFromGoogleSheet = false
   if (await redis.get("pools") === null || forceUpdateFromGoogleSheet)
   {
-    await getGooglesheetData()
+    await findSupporters()
+    await findCurrentList()
   }
   await redis.save()
 }
