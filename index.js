@@ -115,6 +115,7 @@ async function initServer()
   const forceUpdateFromGoogleSheet = false
   if (await redis.get("pools") === null || forceUpdateFromGoogleSheet)
   {
+    // recover from google sheet (I would like to deprecate this)
     await findSupporters()
     await findCurrentList()
   }
