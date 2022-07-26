@@ -5,7 +5,8 @@ const koios = require('../api/koios')
 dotenv.config()
 const GOOGLE_API = process.env.GOOGLE_API
 const {bech32} = require('bech32');
-const redis = require('../db/redis')
+const redis = require('../db/redis');
+const { updateAllowedEpochs } = require('../controllers/f2lbRules');
 
 async function findSupporters(){
     console.log("Recovering supporters from googlesheet")
@@ -24,8 +25,8 @@ async function findSupporters(){
         console.log(bech32StakeAddress)
         // get wallet data
         const accountInfo = await koios.accountInfo(bech32StakeAddress);
-        const laceAmount = parseInt(accountInfo[0].total_balance);
-        const delegation = accountInfo[0].delegated_pool;
+        const laceAmount = parseInt(accountInfo.total_balance);
+        const delegation = accountInfo.delegated_pool;
 
         const delegationTicker = await koios.poolMeta(delegation)
         .then(res => { return res[0].meta_json.ticker });
@@ -108,8 +109,8 @@ async function findCurrentList(){
 
         // get wallet info
         const accountInfo = await koios.accountInfo(bech32StakeAddress);
-        const laceAmount = parseInt(accountInfo[0].total_balance);
-        const delegation = accountInfo[0].delegated_pool;
+        const laceAmount = parseInt(accountInfo.total_balance);
+        const delegation = accountInfo.delegated_pool;
 
         const delegationTicker = await koios.poolMeta(delegation)
         .then(res => { return res[0].meta_json.ticker });
@@ -132,7 +133,9 @@ async function findCurrentList(){
                 delegationTicker: delegationTicker,
             }
         }
-        redis.set(poolId, JSON.stringify(pool))
+        var updatedPool = await updateAllowedEpochs(pool, 0) // update allowed epochs on recovery
+
+        redis.set(poolId, JSON.stringify(updatedPool))
         pools.push(poolId)
         index += 1
         console.log(`\nFinshed processing import for ${ticker}\n\tEpochs [${epochs}]\n\tLace '${laceAmount}'\n\tDelegated to ${delegationTicker}`)
