@@ -4,7 +4,8 @@
   "description": "The backend for first to lifetime block",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "yarn jest"
   },
   "repository": {
     "type": "git",
@@ -30,5 +31,8 @@
     "graphql": "^16.5.0",
     "nodemon": "^2.0.16",
     "redis": "^4.1.0"
+  },
+  "devDependencies": {
+    "jest": "^28.1.3"
   }
 }
