@@ -29,7 +29,7 @@ async function poolMeta(poolId){
 }
 async function accountInfo(bech32StakeAddress){
     return await axios(`https://api.koios.rest/api/v0/account_info?_address=${bech32StakeAddress}`)
-    .then(res => {return res.data})
+    .then(res => {return res.data[0]})
 }
 
 module.exports = {epoch, pools, poolMeta, accountInfo};
