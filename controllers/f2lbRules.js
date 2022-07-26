@@ -1,4 +1,43 @@
-const redis = require('../db/redis')
+const koios = require('../api/koios')
+
+function adaToLace(ada){
+    return parseFloat(ada) * 1000000
+}
+function laceToAda(lace){
+    return parseFloat(lace) / 1000000.0
+}
+
+async function updateAllowedEpochs(pool, epoch)
+{
+    var updatedPool = {...pool};
+    // get ada
+    const accountInfo = await koios.accountInfo(pool.wallet.stakeAddress);
+    const ada = laceToAda(accountInfo.total_balance);
+    console.log(`updateAllowedEpochs ada = ${ada}`)
+    // calc epochs
+    var epochsGranted = 0;
+    if (ada > 1000 ){ epochsGranted = 1 } 
+    if (ada > 3000 ){ epochsGranted = 2 } 
+    if (ada > 10000){ epochsGranted = 3 } 
+    if (ada > 40000){ epochsGranted = 4 } 
+    // if the target pool is in the next 7 to be selected
+    // enter reduce only mode
+    if (pool.epochs[0] - 7 < epoch){
+        console.log(`top7 pool}`)
+        epochsGranted = 4;
+        if (ada <= 40000){ epochsGranted = 3 } 
+        if (ada <= 10000){ epochsGranted = 2 } 
+        if (ada <= 3000 ){ epochsGranted = 1 } 
+        if (ada <= 1000 ){ epochsGranted = 0 }
+        if(epochsGranted > pool.epochsGranted){
+            console.log("er")
+            epochsGranted = pool.epochsGranted;
+        }
+    }
+    console.log(`epochsGranted = ${epochsGranted}`)
+    updatedPool.epochsGranted = epochsGranted;
+    return updatedPool;
+}
 
 async function requirmentsMeet(){
     // pool must have less than 50 lifetime blocks or less than 1 mill to enter queue 
@@ -6,30 +45,24 @@ async function requirmentsMeet(){
     // return true / false
 }
 
-async function updateLeader(){
-    // get all pools
-    const poolList = JSON.parse(await redis.get('pools'))
-
-    for(idx in poolList){
-        const pool = JSON.parse(await redis.get(poolList[idx]))
+async function updateLeader(pools){
+    for(idx in pools){
+        const pool = JSON.parse(await redis.get(pools[idx]))
         if (pool.queuePos === 0){
-            await redis.set('leader', JSON.stringify(pool))
-            return
+            return pool // return leader
         }
     }
 }
 
-async function setStatus(pool){
-    const leader = JSON.parse(await redis.get('leader'))
-    
-    var updatePool = JSON.parse(JSON.stringify(pool))
+async function setStatus(pool, leader){
+    var updatedPool = pool;
     var status = 1
     if (leader.poolIdBech32 === pool.wallet.delegation){
         status = 0
     }
-    updatePool.status = status;
-    await redis.set(pool.poolIdBech32, JSON.stringify(updatePool))
-}
+    updatedPool.status = status;
+    return updatedPool;
+}   
 
 async function balance(){
     // given a pool in the list
@@ -65,4 +98,4 @@ async function handleAddOn(){
     // TODO think about this more
 }
 
-module.exports = {requirmentsMeet, updateLeader, setStatus, balance, listUpdate, requeue, inactive, handleAddOn}
+module.exports = {adaToLace, laceToAda, requirmentsMeet, updateAllowedEpochs, updateLeader, setStatus, balance, listUpdate, requeue, inactive, handleAddOn}
