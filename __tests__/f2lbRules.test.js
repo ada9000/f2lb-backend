@@ -72,7 +72,7 @@ describe("update Allowed epochs", () =>{
         expect(updatedPool.epochsGranted).toBe(0);
     })
     it('in next 7, reduced stake from over 4k to 1k reduces blocks allowed', async () =>{
-        var updatedPoolMock = poolMock;
+        let updatedPoolMock = JSON.parse(JSON.stringify(poolMock))
         updatedPoolMock.wallet.amount = adaToLace(4000)
         updatedPoolMock.queuePos = 5
         updatedPoolMock.epochs = [305, 306]
@@ -81,7 +81,7 @@ describe("update Allowed epochs", () =>{
         expect(updatedPool.epochsGranted).toBe(1);
     })
     it('in next 7, reduced stake from over 4k to 10k same blocks allowed', async () =>{
-        var updatedPoolMock = poolMock;
+        let updatedPoolMock = JSON.parse(JSON.stringify(poolMock))
         updatedPoolMock.wallet.amount = adaToLace(4000)
         updatedPoolMock.queuePos = 5
         updatedPoolMock.epochs = [305, 306]
@@ -90,7 +90,7 @@ describe("update Allowed epochs", () =>{
         expect(updatedPool.epochsGranted).toBe(2);
     })
     it('in next 7, reduced stake from over 4k to 0 no blocks allowed', async () =>{
-        var updatedPoolMock = poolMock;
+        let updatedPoolMock = JSON.parse(JSON.stringify(poolMock))
         updatedPoolMock.wallet.amount = adaToLace(4000)
         updatedPoolMock.queuePos = 5
         updatedPoolMock.epochs = [305, 306]
@@ -105,12 +105,12 @@ describe("update status", () =>{
         poolIdBech32: poolMock.wallet.delegation
     }
     it('pool wallet matches target wallet', async () =>{
-        var updatedPoolMock = poolMock;
+        let updatedPoolMock = JSON.parse(JSON.stringify(poolMock))
         const updatedPool = await updateStatus(updatedPoolMock, targetPool);
         expect(updatedPool.status).toBe(STATUS.DELEGATED);
     })
     it('pool wallet doesn\'t match target', async () =>{
-        var updatedPoolMock = poolMock;
+        let updatedPoolMock = JSON.parse(JSON.stringify(poolMock))
         updatedPoolMock.wallet.delegation = "pool1fu6ppur5uumrpydpeswzrvfg4epr68xw39aar9rcu56tk5ukat3";
         const updatedPool = await updateStatus(updatedPoolMock, targetPool);
         expect(updatedPool.status).toBe(STATUS.NOT_DELEGATED);
