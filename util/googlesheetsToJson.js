@@ -140,6 +140,7 @@ async function findCurrentList(){
         index += 1
         console.log(`\nFinshed processing import for ${ticker}\n\tEpochs [${epochs}]\n\tLace '${laceAmount}'\n\tDelegated to ${delegationTicker}`)
     }
+    redis.set("epoch", currentEpoch)
     redis.set("pools", JSON.stringify(pools))
     return pools;
 }
