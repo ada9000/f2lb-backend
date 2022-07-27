@@ -1,6 +1,7 @@
 const { epochs } = require('@blockfrost/blockfrost-js/lib/endpoints/api/epochs')
 const koios = require('../api/koios')
-const { adaToLace, laceToAda, updateAllowedEpochs, updateStatus, STATUS } = require('../controllers/f2lbRules')
+const fs = require('fs');
+const { adaToLace, laceToAda, updateAllowedEpochs, updateStatus, STATUS, epochChanged, updateQueue } = require('../controllers/f2lbRules')
 
 jest.mock('../api/koios')
 const poolMock = {
@@ -21,6 +22,8 @@ const poolMock = {
       delegationTicker: "ANTRX"
     }
 }
+// load pools mocking data from file
+const poolsMock = JSON.parse(fs.readFileSync('__tests__/queueMock.json', 'utf8'));
 
 async function test(){
     return await koios.poolMeta(delegation)
@@ -78,27 +81,19 @@ describe("update Allowed epochs", () =>{
         expect(updatedPool.epochsGranted).toBe(1);
     })
     it('in next 7, reduced stake from over 4k to 10k same blocks allowed', async () =>{
-        console.log("a")
         var updatedPoolMock = poolMock;
-        console.log(poolMock)
-        console.log(updatedPoolMock)
         updatedPoolMock.wallet.amount = adaToLace(4000)
         updatedPoolMock.queuePos = 5
         updatedPoolMock.epochs = [305, 306]
-        console.log(`epochs granted = ${updatedPoolMock.epochsGranted} epochs = ${updatedPoolMock.ticker}` ) 
         koios.accountInfo = jest.fn().mockReturnValue({total_balance:adaToLace(10000)});
         const updatedPool = await updateAllowedEpochs(updatedPoolMock, 300);
         expect(updatedPool.epochsGranted).toBe(2);
     })
     it('in next 7, reduced stake from over 4k to 0 no blocks allowed', async () =>{
-        console.log("a")
         var updatedPoolMock = poolMock;
-        console.log(poolMock)
-        console.log(updatedPoolMock)
         updatedPoolMock.wallet.amount = adaToLace(4000)
         updatedPoolMock.queuePos = 5
         updatedPoolMock.epochs = [305, 306]
-        console.log(`epochs granted = ${updatedPoolMock.epochsGranted} epochs = ${updatedPoolMock.ticker}` ) 
         koios.accountInfo = jest.fn().mockReturnValue({total_balance:0});
         const updatedPool = await updateAllowedEpochs(updatedPoolMock, 300);
         expect(updatedPool.epochsGranted).toBe(0);
@@ -123,5 +118,99 @@ describe("update status", () =>{
     it('status values are correct', ()=>{
         expect(STATUS.DELEGATED).toBe(0);
         expect(STATUS.NOT_DELEGATED).toBe(1);
+    })
+}),
+describe("epoch changed", () =>{
+    it('epoch hasnt changed', async () =>{
+        koios.epoch = jest.fn().mockReturnValue(300);
+        const res = await epochChanged(300)
+        expect(res).not.toBeTruthy()
+    })
+    it('epoch has changed, expect callback', async () =>{
+        koios.epoch = jest.fn().mockReturnValue(301);
+        const res = await epochChanged(300)
+        expect(res).toBeTruthy()
+    })
+})
+describe("update queue", () =>{
+    it('pool with status 1 is moved down', async () =>{
+        var pools = [...poolsMock]
+        pools[pools.length-1].status = STATUS.NOT_DELEGATED; // alter last pools status
+        pools[23].status = STATUS.NOT_DELEGATED; // pixel
+        const pool0 = pools[pools.length-1].ticker;
+        const pool1 = pools[23].ticker;
+        const updatedQueue = await updateQueue(pools, 353);
+        expect(updatedQueue[0].queuePos).toBe(0);
+        expect(updatedQueue[pools.length-1].ticker).toBe(pool0);
+        expect(updatedQueue[24].ticker).toBe(pool1);
+    })
+    it('multiple pools with status 1 at bottom of pool do not change', async () =>{
+        var pools = [...poolsMock]
+        pools[pools.length-1].status = STATUS.NOT_DELEGATED; // alter last pools status
+        pools[pools.length-2].status = STATUS.NOT_DELEGATED; // alter last pools status
+        pools[pools.length-3].status = STATUS.NOT_DELEGATED; // alter last pools status
+        const pool0 = pools[pools.length-1].ticker;
+        const pool1 = pools[pools.length-2].ticker;
+        const pool2 = pools[pools.length-3].ticker;
+        const updatedQueue = await updateQueue(pools, 353);
+        expect(updatedQueue[pools.length-1].ticker).toBe(pool0);
+        expect(updatedQueue[pools.length-2].ticker).toBe(pool1);
+        expect(updatedQueue[pools.length-3].ticker).toBe(pool2);
+    })
+    it('multiple pools not delgated with a single pool gap', async () =>{
+        var pools = [...poolsMock]
+        pools[pools.length-1].status = STATUS.NOT_DELEGATED; // alter last pools status
+        pools[pools.length-2].status = STATUS.NOT_DELEGATED; // alter last pools status
+        pools[pools.length-3].status = STATUS.NOT_DELEGATED; // alter last pools status
+        pools[pools.length-5].status = STATUS.NOT_DELEGATED; // alter last pools status
+        const pool0 = pools[pools.length-1].ticker;
+        const pool1 = pools[pools.length-2].ticker;
+        const pool2 = pools[pools.length-3].ticker;
+        const pool3 = pools[pools.length-5].ticker;
+        const updatedQueue = await updateQueue(pools, 353);
+        expect(updatedQueue[pools.length-1].ticker).toBe(pool0);
+        expect(updatedQueue[pools.length-2].ticker).toBe(pool1);
+        expect(updatedQueue[pools.length-3].ticker).toBe(pool2);
+        expect(updatedQueue[pools.length-4].ticker).toBe(pool3);
+        /* TODO uncomment if you want to double check 😅
+        console.log("old")
+        console.log(`${pools[pools.length-5].ticker} status=${pools[pools.length-5].status}`)
+        console.log(`${pools[pools.length-4].ticker} status=${pools[pools.length-4].status}`)
+        console.log(`${pools[pools.length-3].ticker} status=${pools[pools.length-3].status}`)
+        console.log(`${pools[pools.length-2].ticker} status=${pools[pools.length-2].status}`)
+        console.log(`${pools[pools.length-1].ticker} status=${pools[pools.length-1].status}`)
+        console.log("new")
+        console.log(updatedQueue[pools.length-5].ticker)
+        console.log(updatedQueue[pools.length-4].ticker)
+        console.log(updatedQueue[pools.length-3].ticker)
+        console.log(updatedQueue[pools.length-2].ticker)
+        console.log(updatedQueue[pools.length-1].ticker)
+        */
+    })
+    it('leader is no loneger leader and moved to end of queue', async () =>{
+        var pools = [...poolsMock]
+        const leaderTicker = pools[0].ticker;
+        console.log(`leader ticker = ${leaderTicker}`)
+        const updatedQueue = await updateQueue(pools, 355);
+        console.log(updatedQueue)
+        expect(updatedQueue[updatedQueue.length-1].ticker).toBe(leaderTicker);
+
+    })
+    it('leader is not delgated?', async () =>{
+    })
+})
+describe("update leader", () =>{
+    it('new leader is assgined', async () =>{
+    })
+})
+describe("full tests", () =>{
+    it('epoch changes pool moves down queue, new leader is assigned', async () =>{
+        // set status
+
+        // update epoch
+
+        // update list
+
+        // update leader
     })
 })
