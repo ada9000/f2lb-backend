@@ -16,7 +16,7 @@ function laceToAda(lace){
 
 async function updateAllowedEpochs(pool, epoch)
 {
-    var updatedPool = {...pool};
+    var updatedPool = JSON.parse(JSON.stringify(pool));
     // get ada
     const accountInfo = await koios.accountInfo(pool.wallet.stakeAddress);
     const ada = laceToAda(accountInfo.total_balance);
