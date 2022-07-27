@@ -134,7 +134,7 @@ describe("epoch changed", () =>{
 })
 describe("update queue", () =>{
     it('pool with status 1 is moved down', async () =>{
-        var pools = [...poolsMock]
+        let pools = JSON.parse(JSON.stringify(poolsMock));
         pools[pools.length-1].status = STATUS.NOT_DELEGATED; // alter last pools status
         pools[23].status = STATUS.NOT_DELEGATED; // pixel
         const pool0 = pools[pools.length-1].ticker;
@@ -145,7 +145,7 @@ describe("update queue", () =>{
         expect(updatedQueue[24].ticker).toBe(pool1);
     })
     it('multiple pools with status 1 at bottom of pool do not change', async () =>{
-        var pools = [...poolsMock]
+        let pools = JSON.parse(JSON.stringify(poolsMock));
         pools[pools.length-1].status = STATUS.NOT_DELEGATED; // alter last pools status
         pools[pools.length-2].status = STATUS.NOT_DELEGATED; // alter last pools status
         pools[pools.length-3].status = STATUS.NOT_DELEGATED; // alter last pools status
@@ -158,7 +158,7 @@ describe("update queue", () =>{
         expect(updatedQueue[pools.length-3].ticker).toBe(pool2);
     })
     it('multiple pools not delgated with a single pool gap', async () =>{
-        var pools = [...poolsMock]
+        let pools = JSON.parse(JSON.stringify(poolsMock));
         pools[pools.length-1].status = STATUS.NOT_DELEGATED; // alter last pools status
         pools[pools.length-2].status = STATUS.NOT_DELEGATED; // alter last pools status
         pools[pools.length-3].status = STATUS.NOT_DELEGATED; // alter last pools status
@@ -188,15 +188,20 @@ describe("update queue", () =>{
         */
     })
     it('leader is no loneger leader and moved to end of queue', async () =>{
-        var pools = [...poolsMock]
+        let pools = JSON.parse(JSON.stringify(poolsMock));
         const leaderTicker = pools[0].ticker;
-        console.log(`leader ticker = ${leaderTicker}`)
         const updatedQueue = await updateQueue(pools, 355);
-        console.log(updatedQueue)
         expect(updatedQueue[updatedQueue.length-1].ticker).toBe(leaderTicker);
-
     })
-    it('leader is not delgated?', async () =>{
+    it('leader is not delgated, but keeps position', async () =>{
+        let pools = JSON.parse(JSON.stringify(poolsMock));
+        //var pools = JSON.parse(fs.readFileSync('__tests__/queueMock.json', 'utf8'));
+        pools[0].status = STATUS.NOT_DELEGATED;
+        const updatedQueue = await updateQueue(pools, 353);
+        console.log(`${pools[0].queuePos} ${pools[0].ticker}`)
+        console.log(`${updatedQueue[0].queuePos} ${updatedQueue[0].ticker}`)
+        expect(updatedQueue[0].queuePos).toBe(0);
+
     })
 })
 describe("update leader", () =>{

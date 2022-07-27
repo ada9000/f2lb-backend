@@ -65,7 +65,7 @@ async function epochChanged(epoch){
 async function updateStatus(pool, leader){
     var updatedPool = pool;
     var status = STATUS.NOT_DELEGATED
-    console.log(`${pool.wallet.delegation} === ${leader.poolIdBech32}`)
+    //console.log(`${pool.wallet.delegation} === ${leader.poolIdBech32}`)
     if (pool.wallet.delegation === leader.poolIdBech32){
         status = STATUS.DELEGATED
         // console.log("delegated")
@@ -75,7 +75,7 @@ async function updateStatus(pool, leader){
 }
 
 async function updateQueue(pools, epoch){
-    var updatedPools = [...pools]
+    var updatedPools = JSON.parse(JSON.stringify(pools));
     // order by pos so higest number first
     updatedPools.sort(function(a, b){
         return b.queuePos - a.queuePos;
@@ -83,6 +83,10 @@ async function updateQueue(pools, epoch){
     // update each pool using status
     var lastIdx = null;
     for(idx in updatedPools){
+        if(parseInt(idx) === updatedPools.length - 1){
+            // ignore current leader (they delegate to themselves anyway)
+            continue
+        }
         if (lastIdx !== null && updatedPools[idx].status === STATUS.NOT_DELEGATED){
             // swap last pool with current pool
             // i.e move last pool up the queue and current pool down the queue
@@ -107,6 +111,7 @@ async function updateQueue(pools, epoch){
         }
         // if no epochs left move leader to back of the queue
         if (epochsLeft === 0){
+            console.log("no epochs")
             updatedPools[updatedPools.length-1].queuePos = lastPos + 1
         }
     }
