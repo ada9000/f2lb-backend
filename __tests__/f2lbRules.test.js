@@ -1,6 +1,6 @@
 const { epochs } = require('@blockfrost/blockfrost-js/lib/endpoints/api/epochs')
 const koios = require('../api/koios')
-const { adaToLace, laceToAda, updateAllowedEpochs } = require('../controllers/f2lbRules')
+const { adaToLace, laceToAda, updateAllowedEpochs, updateStatus, STATUS } = require('../controllers/f2lbRules')
 
 jest.mock('../api/koios')
 const poolMock = {
@@ -26,7 +26,7 @@ async function test(){
     return await koios.poolMeta(delegation)
 }
 
-describe("update Allowed epochs", () =>{
+describe("ada conversions", () =>{
     it('ada to lace', () =>{
         expect(adaToLace(1)).toBe(1000000);
     })
@@ -38,10 +38,6 @@ describe("update Allowed epochs", () =>{
     })
 }),
 describe("update Allowed epochs", () =>{
-    afterEach(() => {
-        jest.clearAllMocks()
-    })
-
     it('over 1k ada gives 1 assigned epochs', async () =>{
         koios.accountInfo = jest.fn().mockReturnValue({total_balance:adaToLace(1000.1)});
         const updatedPool = await updateAllowedEpochs(poolMock, 300);
@@ -106,5 +102,26 @@ describe("update Allowed epochs", () =>{
         koios.accountInfo = jest.fn().mockReturnValue({total_balance:0});
         const updatedPool = await updateAllowedEpochs(updatedPoolMock, 300);
         expect(updatedPool.epochsGranted).toBe(0);
+    })
+
+}),
+describe("update status", () =>{
+    const targetPool = {
+        poolIdBech32: poolMock.wallet.delegation
+    }
+    it('pool wallet matches target wallet', async () =>{
+        var updatedPoolMock = poolMock;
+        const updatedPool = await updateStatus(updatedPoolMock, targetPool);
+        expect(updatedPool.status).toBe(STATUS.DELEGATED);
+    })
+    it('pool wallet doesn\'t match target', async () =>{
+        var updatedPoolMock = poolMock;
+        updatedPoolMock.wallet.delegation = "pool1fu6ppur5uumrpydpeswzrvfg4epr68xw39aar9rcu56tk5ukat3";
+        const updatedPool = await updateStatus(updatedPoolMock, targetPool);
+        expect(updatedPool.status).toBe(STATUS.NOT_DELEGATED);
+    })
+    it('status values are correct', ()=>{
+        expect(STATUS.DELEGATED).toBe(0);
+        expect(STATUS.NOT_DELEGATED).toBe(1);
     })
 })

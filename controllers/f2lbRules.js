@@ -1,8 +1,15 @@
 const koios = require('../api/koios')
 
+
+const STATUS = {
+    DELEGATED: 0,
+    NOT_DELEGATED: 1,
+}
+
 function adaToLace(ada){
     return parseFloat(ada) * 1000000
 }
+
 function laceToAda(lace){
     return parseFloat(lace) / 1000000.0
 }
@@ -39,11 +46,6 @@ async function updateAllowedEpochs(pool, epoch)
     return updatedPool;
 }
 
-async function requirmentsMeet(){
-    // pool must have less than 50 lifetime blocks or less than 1 mill to enter queue 
-    // (don't forget to minus Cardano foundation?)
-    // return true / false
-}
 
 async function updateLeader(pools){
     for(idx in pools){
@@ -54,11 +56,13 @@ async function updateLeader(pools){
     }
 }
 
-async function setStatus(pool, leader){
+async function updateStatus(pool, leader){
     var updatedPool = pool;
-    var status = 1
-    if (leader.poolIdBech32 === pool.wallet.delegation){
-        status = 0
+    var status = STATUS.NOT_DELEGATED
+    console.log(`${pool.wallet.delegation} === ${leader.poolIdBech32}`)
+    if (pool.wallet.delegation === leader.poolIdBech32){
+        status = STATUS.DELEGATED
+        console.log("delegated")
     }
     updatedPool.status = status;
     return updatedPool;
@@ -98,4 +102,11 @@ async function handleAddOn(){
     // TODO think about this more
 }
 
-module.exports = {adaToLace, laceToAda, requirmentsMeet, updateAllowedEpochs, updateLeader, setStatus, balance, listUpdate, requeue, inactive, handleAddOn}
+async function requirmentsMeet(){
+    // pool must have less than 50 lifetime blocks or less than 1 mill to enter queue 
+    // (don't forget to minus Cardano foundation?)
+    // return true / false
+}
+
+
+module.exports = {adaToLace, laceToAda, STATUS, requirmentsMeet, updateAllowedEpochs, updateLeader, updateStatus, balance, listUpdate, requeue, inactive, handleAddOn}
