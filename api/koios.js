@@ -4,6 +4,8 @@ async function epoch(){
     return await axios(`https://api.koios.rest/api/v0/tip`)
     .then(res => {
         return res.data[0].epoch_no
+    }).catch(e => {
+        throw 'koios epoch' 
     })
 }
 
@@ -17,7 +19,9 @@ async function pools(offset=0, data=[]){
             return pools(offset + limit, data);
         }
         return data
-    }).catch(e => {console.log(e)})
+    }).catch(e => {
+        throw 'koios pools' 
+    })
 }
 
 async function poolMeta(poolId){
@@ -26,10 +30,16 @@ async function poolMeta(poolId){
             poolId
         ]
     }).then(res => {return  res.data })
+    .catch(e => {
+        throw 'koios pool meta' 
+    })
 }
 async function accountInfo(bech32StakeAddress){
     return await axios(`https://api.koios.rest/api/v0/account_info?_address=${bech32StakeAddress}`)
     .then(res => {return res.data[0]})
+    .catch(e => {
+        throw 'koios account info' 
+    })
 }
 
 module.exports = {epoch, pools, poolMeta, accountInfo};

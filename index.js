@@ -125,31 +125,36 @@ async function initServer()
 
 async function update()
 {
-  // get pool list from redis
-  const poolList = JSON.parse(await redis.get('pools'))
-  var epoch = await redis.get('epoch')
-  
-  if(!epoch){
-    epoch = await koios.epoch();
-    redis.set("epoch", epoch)
-    console.log(`epoch missing updated it to '${epoch}'`)
+  try {
+    // get pool list from redis
+    const poolList = JSON.parse(await redis.get('pools'))
+    // get epoch
+    var epoch = await redis.get('epoch')
+    if(!epoch){
+      epoch = await koios.epoch();
+      redis.set("epoch", epoch)
+      console.log(`epoch missing updated it to '${epoch}'`)
+    }
+    // get all pool objects (as 'pools' is just a list of reference strings)
+    var pools = []
+    for(idx in poolList){
+      const pool = JSON.parse(await redis.get(poolList[idx]))
+      pools.push(pool)
+    }
+    // update pool list and then reflect changes in redis
+    const updatedPools = f2lb.update(pools, epoch);
+    for (idx in updatedPools){
+      const poolId = updatedList[idx].poolIdBech32;
+      redis.set(poolId, JSON.stringify(updatedPools[idx]))
+    }
+    // log success / force save
+    await redis.save()
+    const time = new Date().toISOString();
+    console.log(`updated list at '${time}'`)
+  } catch(e) {
+    const time = new Date().toISOString();
+    console.log(`${time} failed to update due to ${e}`)
   }
-
-  // get all pool objects (as 'pools' is just a list of reference strings)
-  var pools = []
-  for(idx in poolList){
-    const pool = JSON.parse(await redis.get(poolList[idx]))
-    pools.push(pool)
-  }
-  // update pool list and then reflect changes in redis
-  const updatedPools = f2lb.update(pools, epoch);
-  for (idx in updatedPools){
-    const poolId = updatedList[idx].poolIdBech32;
-    redis.set(poolId, JSON.stringify(updatedPools[idx]))
-  }
-  const time = new Date().toISOString();
-  console.log(`updated list at '${time}'`)
-  // check epoch, if it change update list
 }
 
 initServer().then(() => {
