@@ -83,7 +83,7 @@ const RootQueryType = new GraphQLObjectType({
         const poolList = JSON.parse(await redis.get('pools'))
         for (idx in poolList){
           const pool = JSON.parse(await redis.get(poolList[idx]))
-          console.log(`${pool.ticker} ${args.ticker}`)
+          //console.log(`${pool.ticker} ${args.ticker}`)
           if (pool.ticker === args.ticker){
             return pool
           }

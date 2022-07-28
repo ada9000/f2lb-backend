@@ -130,7 +130,7 @@ async function update(pools, epoch){
     const leader = updatedPools[0];
     console.log(`leader ticker is '${leader.ticker}'`)
     for(idx in updatedPools){
-        console.log(updatedPools[idx])
+        //console.log(updatedPools[idx])
         updatedPools[idx] = await updateStatus(updatedPools[idx], leader);
     }
 
