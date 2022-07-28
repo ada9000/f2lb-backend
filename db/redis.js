@@ -11,6 +11,10 @@ client.on('connect', function (err) {
     }
 });
 
+const db_number = 2;
+client.select(db_number);
+console.log(`using db ${db_number} run 'redis-cli' then select ${db_number}`)
+
 async function set(key, value)
 {
     await client.set(key,value)
