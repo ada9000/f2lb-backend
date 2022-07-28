@@ -45,6 +45,7 @@ async function updateAllowedEpochs(pool, epoch)
     return updatedPool;
 }
 
+/*
 async function updateLeader(pools){
     for(idx in pools){
         const pool = JSON.parse(await redis.get(pools[idx]))
@@ -53,6 +54,7 @@ async function updateLeader(pools){
         }
     }
 }
+*/
 
 async function epochChanged(epoch){
     const actualEpoch = await koios.epoch();
@@ -161,4 +163,4 @@ async function requirmentsMeet(){
 }
 
 
-module.exports = {adaToLace, laceToAda, STATUS, requirmentsMeet, updateAllowedEpochs, updateLeader, updateStatus, epochChanged, updateQueue, update, inactive, handleAddOn}
+module.exports = {adaToLace, laceToAda, STATUS, requirmentsMeet, updateAllowedEpochs, updateStatus, epochChanged, updateQueue, update, inactive, handleAddOn}

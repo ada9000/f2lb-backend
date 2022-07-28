@@ -14,6 +14,7 @@ const app = express()
 app.use(cors())
 
 const redis = require('./db/redis')
+const koios = require('./api/koios')
 const f2lb = require('./controllers/f2lbRules')
 const { findSupporters, findCurrentList } = require('./util/googlesheetsToJson')
 
@@ -124,16 +125,30 @@ async function initServer()
 
 async function update()
 {
+  // get pool list from redis
   const poolList = JSON.parse(await redis.get('pools'))
-  console.log("update leader")
-  await f2lb.updateLeader();
-  for(idx in poolList){
-    const pool = JSON.parse(await redis.get(poolList[idx]))
-    console.log("update status")
-    await f2lb.setStatus(pool)
+  var epoch = await redis.get('epoch')
+  
+  if(!epoch){
+    epoch = await koios.epoch();
+    redis.set("epoch", epoch)
+    console.log(`epoch missing updated it to '${epoch}'`)
   }
 
-  console.log("done")
+  // get all pool objects (as 'pools' is just a list of reference strings)
+  var pools = []
+  for(idx in poolList){
+    const pool = JSON.parse(await redis.get(poolList[idx]))
+    pools.push(pool)
+  }
+  // update pool list and then reflect changes in redis
+  const updatedPools = f2lb.update(pools, epoch);
+  for (idx in updatedPools){
+    const poolId = updatedList[idx].poolIdBech32;
+    redis.set(poolId, JSON.stringify(updatedPools[idx]))
+  }
+  const time = new Date().toISOString();
+  console.log(`updated list at '${time}'`)
   // check epoch, if it change update list
 }
 
@@ -141,10 +156,8 @@ initServer().then(() => {
   app.listen(4001, () => {
     console.log('Server Running, http://localhost:4001/graphql')
   })
-  // update data every minute
-  update()
-  console.log("Setting 1min update job")
-  //setInterval(update, 60000)
+  // update every 15 minutes
+  setInterval(update, 60000*15)
 })
 
 
