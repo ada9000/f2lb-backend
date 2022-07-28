@@ -122,18 +122,24 @@ async function updateQueue(pools, epoch){
     return updatedPools
 }
 
-async function listUpdate(){
-    // check current list against current epoch
+async function update(pools, epoch){
+    var updatedPools = JSON.parse(JSON.stringify(pools));
+    // update all status
+    const leader = updatedPools[0];
+    console.log(`leader ticker is '${leader.ticker}'`)
+    for(idx in updatedPools){
+        console.log(updatedPools[idx])
+        updatedPools[idx] = await updateStatus(updatedPools[idx], leader);
+    }
 
-    // adjust numbers
-
-    // if leader is done change pos to -1
-}
-
-async function requeue(){
-    // check for -1
-
-    // move -1 pool to bottom of the list
+    // if epoch change update list
+    if (await epochChanged(epoch)){
+        const actualEpoch = await koios.epoch();
+        console.log(`epcoh changed to '${actualEpoch}'`)
+        return await updateQueue(updatedPools, actualEpoch)
+    }
+    console.log(`no change returning updated`)
+    return updatedPools;
 }
 
 async function inactive(){
@@ -155,4 +161,4 @@ async function requirmentsMeet(){
 }
 
 
-module.exports = {adaToLace, laceToAda, STATUS, requirmentsMeet, updateAllowedEpochs, updateLeader, updateStatus, epochChanged, updateQueue, listUpdate, requeue, inactive, handleAddOn}
+module.exports = {adaToLace, laceToAda, STATUS, requirmentsMeet, updateAllowedEpochs, updateLeader, updateStatus, epochChanged, updateQueue, update, inactive, handleAddOn}

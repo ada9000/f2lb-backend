@@ -1,7 +1,6 @@
-const { epochs } = require('@blockfrost/blockfrost-js/lib/endpoints/api/epochs')
 const koios = require('../api/koios')
 const fs = require('fs');
-const { adaToLace, laceToAda, updateAllowedEpochs, updateStatus, STATUS, epochChanged, updateQueue } = require('../controllers/f2lbRules')
+const { adaToLace, laceToAda, updateAllowedEpochs, updateStatus, STATUS, epochChanged, updateQueue, update } = require('../controllers/f2lbRules')
 
 jest.mock('../api/koios')
 const poolMock = {
@@ -195,27 +194,37 @@ describe("update queue", () =>{
     })
     it('leader is not delgated, but keeps position', async () =>{
         let pools = JSON.parse(JSON.stringify(poolsMock));
-        //var pools = JSON.parse(fs.readFileSync('__tests__/queueMock.json', 'utf8'));
         pools[0].status = STATUS.NOT_DELEGATED;
         const updatedQueue = await updateQueue(pools, 353);
-        console.log(`${pools[0].queuePos} ${pools[0].ticker}`)
-        console.log(`${updatedQueue[0].queuePos} ${updatedQueue[0].ticker}`)
         expect(updatedQueue[0].queuePos).toBe(0);
-
-    })
-})
-describe("update leader", () =>{
-    it('new leader is assgined', async () =>{
     })
 })
 describe("full tests", () =>{
-    it('epoch changes pool moves down queue, new leader is assigned', async () =>{
-        // set status
+    it('epoch changes but pool withan  epoch left stays in queue', async () =>{
+        let pools = JSON.parse(JSON.stringify(poolsMock));
+        koios.epoch = jest.fn().mockReturnValue(354);
+        const updatedPools = await update(pools, 353);
+        expect(pools[0].ticker).toBe(updatedPools[0].ticker);
+    })
+    it('simulate 2 passing epochs', async () =>{
+        let pools = JSON.parse(JSON.stringify(poolsMock));
+        koios.epoch = jest.fn().mockReturnValue(354);
+        const updatedPools0 = await update(pools, 353);
+        koios.epoch = jest.fn().mockReturnValue(355);
+        const updatedPools1 = await update(updatedPools0, 354)
+        expect(pools[1].ticker).toBe(updatedPools1[0].ticker);
 
-        // update epoch
-
-        // update list
-
-        // update leader
+    })
+    it('pool in queue missed 6 delegations and is removed', async () =>{
+    })
+    it('new pool joins queue and is added to end', async () =>{
+    })
+    it('duplicated pool attempts to join the queue but is rejected', async () =>{
+    })
+    it('pool no longer meets requirments and is dropped', async () =>{
+    })
+    it('email is sent on epoch change', async () =>{
+    })
+    it('duplicate queue', async () =>{
     })
 })
