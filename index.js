@@ -142,10 +142,18 @@ async function update()
       pools.push(pool)
     }
     // update pool list and then reflect changes in redis
-    const updatedPools = f2lb.update(pools, epoch);
+    const updatedPools = await f2lb.update(pools, epoch);
     for (idx in updatedPools){
-      const poolId = updatedList[idx].poolIdBech32;
+      const poolId = updatedPools[idx].poolIdBech32;
       redis.set(poolId, JSON.stringify(updatedPools[idx]))
+    }
+    // update epoch in db if nec
+    const currentEpoch = await redis.get('epoch')
+    const actualEpoch = await koios.epoch();
+
+    if(actualEpoch !== currentEpoch){
+      await redis.set('epoch', actualEpoch)
+      console.log(`epoch '${currentEpoch} -> '${actualEpoch}'`);
     }
     // log success / force save
     await redis.save()
@@ -162,6 +170,7 @@ initServer().then(() => {
     console.log('Server Running, http://localhost:4001/graphql')
   })
   // update every 15 minutes
+  update()
   setInterval(update, 60000*15)
 })
 

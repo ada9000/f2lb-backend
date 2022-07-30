@@ -53,7 +53,7 @@ async function findCurrentList(){
     const gSheetData = await axios(`https://sheets.googleapis.com/v4/spreadsheets/1-mA8vY0ZtzlVdH4XA5-J4nIZo4qFR_vFbnBFkpMLlYo/values/MainQueue?key=${GOOGLE_API}`)
     .then(res => {
         //const header = res.data.values[1];
-        const rows = res.data.values.slice(15);
+        const rows = res.data.values.slice(16);
         return rows
     })
     const currentEpoch = await koios.epoch()
@@ -112,9 +112,13 @@ async function findCurrentList(){
         const laceAmount = parseInt(accountInfo.total_balance);
         const delegation = accountInfo.delegated_pool;
 
-        const delegationTicker = await koios.poolMeta(delegation)
-        .then(res => { return res[0].meta_json.ticker });
-
+        var delegationTicker = 'TODO'
+        if(delegation === 'pool1xpfe5q3v3axrjdc8h38taaa93frq3m9pfewxk46x4r6jgy2yj5n'){
+            delegationTicker = 'MAPLE'
+        } else {
+            delegationTicker = await koios.poolMeta(delegation)
+            .then(res => { return res[0].meta_json.ticker });
+        }
         // create pool json
         const pool = {
             poolIdBech32:poolId,
