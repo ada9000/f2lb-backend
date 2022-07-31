@@ -76,6 +76,7 @@ async function epochChanged(epoch){
 async function updateStatus(pool, leader){
     var updatedPool = pool;
     var status = STATUS.NOT_DELEGATED
+    console.log(`updating pool '${pool.ticker}' with status '${pool.status}' delgated to ${pool.wallet.delgation} with '${laceToAda(pool.wallet.amount)}' ADA`)
 
     // update using koios
     const accountInfo = await koios.accountInfo(pool.wallet.stakeAddress);
@@ -91,6 +92,7 @@ async function updateStatus(pool, leader){
     }
     updatedPool.status = status;
 
+    console.log(`finshed update for pool '${pool.ticker}' with status '${pool.status}' delgated to ${pool.wallet.delgation} with '${laceToAda(pool.wallet.amount)}' ADA`)
     return updatedPool;
 }
 
