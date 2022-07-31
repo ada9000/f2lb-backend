@@ -14,6 +14,15 @@ function laceToAda(lace){
     return parseFloat(lace) / 1000000.0
 }
 
+async function addNewPool(poolId, stakeAddress){
+    // TODO (also run for ANTRX)
+}
+
+async function addNewSupporter(alias, stakeAddress){
+    // TODO
+}
+
+
 async function updateAllowedEpochs(pool, epoch)
 {
     var updatedPool = JSON.parse(JSON.stringify(pool));
@@ -67,12 +76,21 @@ async function epochChanged(epoch){
 async function updateStatus(pool, leader){
     var updatedPool = pool;
     var status = STATUS.NOT_DELEGATED
+
+    // update using koios
+    const accountInfo = await koios.accountInfo(pool.wallet.stakeAddress);
+    const laceAmount = parseInt(accountInfo.total_balance);
+    const delegation = accountInfo.delegated_pool;
+    pool.wallet.amount = laceAmount;
+    pool.wallet.delegation = delegation;
+
     //console.log(`${pool.wallet.delegation} === ${leader.poolIdBech32}`)
     if (pool.wallet.delegation === leader.poolIdBech32){
         status = STATUS.DELEGATED
         // console.log("delegated")
     }
     updatedPool.status = status;
+
     return updatedPool;
 }
 

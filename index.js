@@ -40,9 +40,10 @@ const PoolType = new GraphQLObjectType({
     imageUrl: { type: new GraphQLNonNull(GraphQLString) },
     epochs: { type: new GraphQLList(GraphQLInt) },
     numEpochs: { type: new GraphQLNonNull(GraphQLInt) },
+    epochsGranted:{ type: new GraphQLNonNull(GraphQLInt) },
     queuePos: { type: new GraphQLNonNull(GraphQLInt) },
     status: {type:new GraphQLNonNull(GraphQLInt)},
-    wallet: {type: WalletType}
+    wallet: {type: WalletType},
   })
 })
 
@@ -137,9 +138,11 @@ async function update()
     }
     // get all pool objects (as 'pools' is just a list of reference strings)
     var pools = []
+    const leader = JSON.parse(await redis.get(poolList[0]))
     for(idx in poolList){
       const pool = JSON.parse(await redis.get(poolList[idx]))
-      pools.push(pool)
+      const updatedPool = await f2lb.updateStatus(pool, leader)
+      pools.push(updatedPool)
     }
     // update pool list and then reflect changes in redis
     const updatedPools = await f2lb.update(pools, epoch);
