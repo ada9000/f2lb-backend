@@ -74,25 +74,27 @@ async function epochChanged(epoch){
 }
 
 async function updateStatus(pool, leader){
-    var updatedPool = pool;
+    var updatedPool = JSON.parse(JSON.stringify(pool));
     var status = STATUS.NOT_DELEGATED
-    console.log(`updating pool '${pool.ticker}' with status '${pool.status}' delgated to ${pool.wallet.delgation} with '${laceToAda(pool.wallet.amount)}' ADA`)
+    console.log(`updating pool '${pool.ticker}' with status '${pool.status}' delgated to ${pool.wallet.delegation} with '${laceToAda(pool.wallet.amount)}' ADA`)
 
     // update using koios
     const accountInfo = await koios.accountInfo(pool.wallet.stakeAddress);
     const laceAmount = parseInt(accountInfo.total_balance);
     const delegation = accountInfo.delegated_pool;
-    pool.wallet.amount = laceAmount;
-    pool.wallet.delegation = delegation;
+
+    console.log(delegation)
+    updatedPool.wallet.amount = laceAmount;
+    updatedPool.wallet.delegation = delegation;
 
     //console.log(`${pool.wallet.delegation} === ${leader.poolIdBech32}`)
-    if (pool.wallet.delegation === leader.poolIdBech32){
+    if (updatedPool.wallet.delegation === leader.poolIdBech32){
         status = STATUS.DELEGATED
         // console.log("delegated")
     }
     updatedPool.status = status;
 
-    console.log(`finshed update for pool '${pool.ticker}' with status '${pool.status}' delgated to ${pool.wallet.delgation} with '${laceToAda(pool.wallet.amount)}' ADA`)
+    console.log(`finshed update for pool '${updatedPool.ticker}' with status '${updatedPool.status}' delgated to ${updatedPool.wallet.delegation} with '${laceToAda(updatedPool.wallet.amount)}' ADA`)
     return updatedPool;
 }
 
