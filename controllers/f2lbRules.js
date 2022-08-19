@@ -87,7 +87,12 @@ async function updateStatus(pool, leader){
     updatedPool.wallet.amount = laceAmount;
     updatedPool.wallet.delegation = delegation;
     updatedPool.wallet.delegationTicker = await koios.poolMeta(delegation)
-        .then(res => { return res[0].meta_json.ticker });
+        .then(res => { 
+            console.log(res)
+            return res[0].meta_json.ticker
+         }).catch(() => {
+             return "NOT FOUND" 
+         });
 
     //console.log(`${pool.wallet.delegation} === ${leader.poolIdBech32}`)
     if (updatedPool.wallet.delegation === leader.poolIdBech32){
