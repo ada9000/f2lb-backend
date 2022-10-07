@@ -4,7 +4,7 @@
   "description": "The backend for first to lifetime block",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "ts-node index.js",
     "test": "yarn jest"
   },
   "repository": {
@@ -33,6 +33,8 @@
     "redis": "^4.1.0"
   },
   "devDependencies": {
-    "jest": "^28.1.3"
+    "jest": "^28.1.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
   }
 }

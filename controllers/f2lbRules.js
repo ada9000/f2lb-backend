@@ -88,7 +88,6 @@ async function updateStatus(pool, leader){
     updatedPool.wallet.delegation = delegation;
     updatedPool.wallet.delegationTicker = await koios.poolMeta(delegation)
         .then(res => { 
-            console.log(res)
             return res[0].meta_json.ticker
          }).catch(() => {
              return "NOT FOUND" 
