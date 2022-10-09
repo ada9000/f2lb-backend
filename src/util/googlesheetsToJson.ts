@@ -5,7 +5,7 @@ const koios = require("../api/koios");
 dotenv.config();
 const GOOGLE_API = process.env.GOOGLE_API;
 const { bech32 } = require("bech32");
-const redis = require("../db/redis");
+//const redis = require("../db/redis");
 const { updateAllowedEpochs } = require("../controllers/f2lbRules");
 
 async function findSupporters() {
@@ -34,8 +34,6 @@ async function findSupporters() {
   tmp.forEach((x) => {
     hmm.push(x.bech32);
   });
-  console.log(hmm);
-  throw new Error("a");
 
   const accounts = await koios.accountInfo(hmm);
   console.log(accounts);
@@ -88,6 +86,9 @@ async function findCurrentList() {
   const poolList = await koios.pools().then((d: any) => {
     return d;
   });
+
+  console.log("pool list done");
+
   var targetEpoch = parseInt(currentEpoch);
   var index = 0;
   for (let row in gSheetData) {
@@ -131,44 +132,46 @@ async function findCurrentList() {
       throw `Pool not found with ${ticker} when using https://api.koios.rest/api/v0/pool_list (retry)`;
     }
     // get metadata
+    console.log("B4 Pool metadata");
+    console.log(poolId);
     const poolMeta = await koios.poolMeta(poolId);
-    //@ts-ignore
-    const website = poolMeta[0].meta_json
-      ? //@ts-ignore
-        poolMeta[0].meta_json.homepage
-      : null;
-    //@ts-ignore
-    const description = poolMeta[0].meta_json
-      ? //@ts-ignore
-        poolMeta[0].meta_json.description
-      : null;
-    const metaUrl = poolMeta[0].meta_url;
-    var meta = null;
-    try {
-      meta = await axios(metaUrl).then((res: any) => {
-        return res.data;
-      });
-    } catch (e) {}
-    var extendedMeta = null;
-    try {
-      extendedMeta = await axios(meta.extended).then((res: any) => {
-        return res.data;
-      });
-    } catch (e) {}
-    const image = extendedMeta ? extendedMeta.info.url_png_logo : null;
+    console.log("Pool metadata");
+    console.log(poolMeta);
+    console.log(poolMeta[0]);
+    var website: string;
+    var description: string;
+    var metaUrl: string;
+    var image: string;
+    if (poolMeta[0]) {
+      website = poolMeta[0].meta_json.homepage;
+      description = poolMeta[0].meta_json.description;
+      metaUrl = poolMeta[0].meta_url;
+    } else {
+      throw new Error("boo");
+    }
+
+    if (metaUrl) {
+      var meta = null;
+      try {
+        meta = await axios(metaUrl).then((res: any) => {
+          return res.data;
+        });
+      } catch (e) {}
+      var extendedMeta = null;
+      try {
+        extendedMeta = await axios(meta.extended).then((res: any) => {
+          return res.data;
+        });
+      } catch (e) {}
+      image = extendedMeta ? extendedMeta.info.url_png_logo : null;
+    }
 
     // get wallet info
     const accountInfo = await koios.accountInfo(bech32StakeAddress);
     const laceAmount = parseInt(accountInfo.total_balance);
     const delegation = accountInfo.delegated_pool;
 
-    var delegationTicker = "TODO";
-    if (
-      delegation === "pool1xpfe5q3v3axrjdc8h38taaa93frq3m9pfewxk46x4r6jgy2yj5n"
-    ) {
-      delegationTicker = "MAPLE";
-    } else {
-      delegationTicker = await koios.poolMeta(delegation).then((res: any) => {
+    var delegationTicker = await koios.poolMeta(delegation).then((res: any) => {
         return res[0].meta_json.ticker;
       });
     }
@@ -176,9 +179,10 @@ async function findCurrentList() {
     const pool = {
       poolIdBech32: poolId,
       ticker: ticker,
-      website: website ? website : "",
-      imageUrl: image ? image : "",
-      description: description ? description : "",
+      website: website,
+      //@ts-ignore
+      imageUrl: image ? image : undefined,
+      description: description,
       epochs: epochs,
       numEpochs: epochs.length,
       queuePos: index,

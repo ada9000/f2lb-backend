@@ -55,7 +55,7 @@ async function accountInfo(
 ): Promise<AccountInformation[]> {
   return await axios
     .post(`https://api.koios.rest/api/v0/account_info`, {
-      _stake_addresses: bech32StakeAddresses,
+      _stake_addresses: [bech32StakeAddresses],
     })
     .then((res: any) => {
       return res.data;

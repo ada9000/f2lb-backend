@@ -1,0 +1,28 @@
+type Query {
+  Pools: [Pool]
+  Supporters: [Supporter]
+}
+
+type Supporter {
+  supportingLeader: Boolean!
+  alias: String!
+  wallets: [Wallet]!
+}
+
+type Pool {
+  supportingLeader: Boolean!
+  bech32: String!
+  ticker: String!
+  description: String
+  website: String
+  imageUrl: String
+  epochs: [Int]!
+  wallets: [Wallet]!
+}
+
+type Wallet {
+  lace: Int!
+  stakeAddr: String!
+  delegatedBech32: String!
+  ticker: String
+}

@@ -1,10 +1,10 @@
 {
   "name": "f2lb-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "The backend for first to lifetime block",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node index.js",
+    "start": "ts-node src/index.ts",
     "test": "yarn jest"
   },
   "repository": {
