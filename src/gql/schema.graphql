@@ -16,7 +16,8 @@ type Pool {
   description: String
   website: String
   imageUrl: String
-  epochs: [Int]!
+  allowedEpochs: Int!
+  assignedEpochs: [Int]!
   wallets: [Wallet]!
 }
 

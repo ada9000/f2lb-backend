@@ -7,7 +7,7 @@ import {
 
 const { default: axios } = require("axios");
 
-async function epoch(): Promise<Tip> {
+export async function epoch(): Promise<Tip> {
   return await axios(`https://api.koios.rest/api/v0/tip`)
     .then((res: any) => {
       return res.data[0].epoch_no;
@@ -17,7 +17,10 @@ async function epoch(): Promise<Tip> {
     });
 }
 
-async function pools(offset = 0, data = []): Promise<PoolListItem[]> {
+export async function allCardanoPools(
+  offset = 0,
+  data = []
+): Promise<PoolListItem[]> {
   const limit = 900;
   return await axios(
     `https://api.koios.rest/api/v0/pool_list?offset=${offset}&limit=${limit}`
@@ -29,7 +32,7 @@ async function pools(offset = 0, data = []): Promise<PoolListItem[]> {
         console.log(
           `GET https://api.koios.rest/api/v0/pool_list?offset=${offset}&limit=${limit}`
         );
-        return pools(offset + limit, data);
+        return allCardanoPools(offset + limit, data);
       }
       return data;
     })
@@ -38,10 +41,12 @@ async function pools(offset = 0, data = []): Promise<PoolListItem[]> {
     });
 }
 
-async function poolMeta(poolId: string): Promise<PoolMetadata[]> {
+export async function poolMeta(
+  poolBech32Ids: string[]
+): Promise<PoolMetadata[]> {
   return await axios
     .post(`https://api.koios.rest/api/v0/pool_metadata`, {
-      _pool_bech32_ids: [poolId],
+      _pool_bech32_ids: poolBech32Ids,
     })
     .then((res: any) => {
       return res.data;
@@ -50,7 +55,8 @@ async function poolMeta(poolId: string): Promise<PoolMetadata[]> {
       throw "koios pool meta";
     });
 }
-async function accountInfo(
+
+export async function accountInfo(
   bech32StakeAddresses: string[]
 ): Promise<AccountInformation[]> {
   return await axios
@@ -61,10 +67,7 @@ async function accountInfo(
       return res.data;
     })
     .catch((e: any) => {
-      console.log(bech32StakeAddresses);
       console.log(e);
       throw `koios account info issue with ${bech32StakeAddresses}`;
     });
 }
-
-module.exports = { epoch, pools, poolMeta, accountInfo };

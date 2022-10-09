@@ -1,18 +1,16 @@
 const express = require("express");
-const { graphqlHTTP } = require("express-graphql");
 const cors = require("cors");
 const app = express();
 
-// const redis = require("./db/redis");
-// const koios = require("./api/koios");
-// const f2lb = require("./controllers/f2lbRules");
-
+const { graphqlHTTP } = require("express-graphql");
 const { loadSchema } = require("@graphql-tools/load");
 const { GraphQLFileLoader } = require("@graphql-tools/graphql-file-loader");
 const { addResolversToSchema } = require("@graphql-tools/schema");
 
 const { initRedis } = require("./util/redis");
 const { resolvers } = require("./gql/resolvers");
+import { getPools } from "./model/pools";
+import { recoverCurrentPoolList } from "./util/recoverFromGoogleSheets";
 
 async function initServer() {
   console.log("Init cors");
@@ -22,11 +20,12 @@ async function initServer() {
   await initRedis();
 
   console.log("Init graphql");
+  // get schema
   const schema = await loadSchema("src/gql/schema.graphql", {
     loaders: [new GraphQLFileLoader()],
   });
+  // get resolvers
   const schemaWithResolvers = await addResolversToSchema({ schema, resolvers });
-
   app.use(
     "/graphql",
     graphqlHTTP({
@@ -95,5 +94,11 @@ initServer().then(() => {
   });
   // update every 15 minutes
   //update();
+  (async () => {
+    console.log("recover test");
+    await recoverCurrentPoolList();
+    const res = await getPools();
+    console.log(JSON.stringify(res));
+  })();
   //setInterval(update, 60000 * 15);
 });

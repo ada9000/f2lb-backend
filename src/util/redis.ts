@@ -16,6 +16,10 @@ export async function initRedis() {
   console.log(`using db ${db_number} run 'redis-cli' then select ${db_number}`);
 }
 
+export async function redisKeys(pattern: string) {
+  return await client.keys(pattern);
+}
+
 export async function redisSet(key: string, value: any) {
   await client.set(key, value);
 }
