@@ -49,10 +49,37 @@ export async function update() {
 
   // TODO: ! update list again...
 
+  // get epoch
+
+  // get pools
+
+  // filter out all wallets ids
+
+  // api request for wallets
+
+  // update each pools wallets
+
+  // update each pools allowed epochs and assigned epochs
+
+  // if new epoch > last epoch
+
+  // order by queue
+
+  // check if leader has epoch >= current epoch
+  // if no
+  // update queue so leader is last
+
+  // rebase queue based on supporting leader tag
+
   console.log(`🏁 update finished at ${new Date().toLocaleString()}`);
 }
 
-export async function epochsAllowed(lace: number) {
+export async function epochsAllowed(
+  lace: number,
+  allowedEpochs: number,
+  assignedEpochs: number[],
+  currentEpoch: number
+) {
   const ada = laceToAda(lace.toString());
   let epochsGranted = 0;
   if (ada > 1000) {
@@ -67,5 +94,28 @@ export async function epochsAllowed(lace: number) {
   if (ada > 40000) {
     epochsGranted = 4;
   }
+
+  // if the target pool is in the next 7 to be selected
+  // enter reduce only mode
+  if (assignedEpochs[0] - 7 < currentEpoch) {
+    // console.log(`top7 pool}`)
+    epochsGranted = 4;
+    if (ada <= 40000) {
+      epochsGranted = 3;
+    }
+    if (ada <= 10000) {
+      epochsGranted = 2;
+    }
+    if (ada <= 3000) {
+      epochsGranted = 1;
+    }
+    if (ada <= 1000) {
+      epochsGranted = 0;
+    }
+    if (epochsGranted > allowedEpochs) {
+      epochsGranted = allowedEpochs;
+    }
+  }
+
   return epochsGranted;
 }

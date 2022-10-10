@@ -164,7 +164,21 @@ export async function recoverCurrentPoolList() {
       ? metadata[0].meta_json.ticker
       : p.tmpTicker;
 
-    var allowedEpochs = await epochsAllowed(totalLace);
+    // assign allowed epochs
+    const ada = laceToAda(totalLace.toString());
+    let allowedEpochs = 0;
+    if (ada > 1000) {
+      allowedEpochs = 1;
+    }
+    if (ada > 3000) {
+      allowedEpochs = 2;
+    }
+    if (ada > 10000) {
+      allowedEpochs = 3;
+    }
+    if (ada > 40000) {
+      allowedEpochs = 4;
+    }
 
     // TODO: REMOVE ONE EPOCH - due to epochsAllowed not accounting for last past epoch on first pool in queue
     if (p.tmpTicker.match("T2H")) {
