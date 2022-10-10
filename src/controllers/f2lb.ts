@@ -1,3 +1,7 @@
+import { accountInfo, singleAccountInfo, tip } from "../api/koios";
+import { getPools, setPool } from "../model/pools";
+import { getEpoch } from "../model/state";
+import { Pool, Wallet } from "../types/gql";
 import { laceToAda } from "../util/utils";
 
 /*
@@ -49,20 +53,86 @@ export async function update() {
 
   // TODO: ! update list again...
 
+  const lastEpoch = await getEpoch();
   // get epoch
+  const currentEpoch = parseInt((await tip()).epoch_no);
 
   // get pools
+  const pools = await getPools();
+
+  var leaderPoolId: string | null = null;
+
+  await pools.forEach((pool) => {
+    if (pool.queuePos === 0) {
+      leaderPoolId = pool.bech32;
+      console.log(`Leader is '${leaderPoolId}'`);
+    }
+  });
+
+  if (!leaderPoolId) {
+    throw new Error("could not find leader");
+  }
 
   // filter out all wallets ids
+  const bech32StakeAddresses: string[] = [];
+  await pools.forEach(async (pool) => {
+    await pool.wallets.forEach((wallet) => {
+      bech32StakeAddresses.push(wallet.stakeAddr);
+    });
+  });
 
-  // api request for wallets
+  // update each pools wallets information
+  await pools.forEach(async (pool) => {
+    let total_lace = 0;
+    let supportingLeader = false;
+    // update wallets
+    const updatedWallets: Wallet[] = new Array();
 
-  // update each pools wallets
+    for (const idx in pool.wallets) {
+      const wallet = pool.wallets[idx];
+      const account = await singleAccountInfo(wallet.stakeAddr);
+      console.log(account);
+      total_lace += parseInt(account.total_balance);
+      updatedWallets.push({
+        stakeAddr: account.stake_address,
+        lace: parseInt(account.total_balance),
+        delegatedBech32: account.delegated_pool,
+      });
+      // update supporting leader, TODO: handle multiple wallets better
+      if (
+        account?.delegated_pool &&
+        //@ts-ignore
+        account.delegated_pool.match(leaderPoolId)
+      ) {
+        supportingLeader = true;
+      }
+    }
 
-  // update each pools allowed epochs and assigned epochs
+    const allowedEpochs = await epochsAllowed(
+      total_lace,
+      pool.allowedEpochs,
+      pool.assignedEpochs,
+      currentEpoch
+    );
+
+    console.log(
+      `UPDATED [${pool.ticker}] has wallets ${JSON.stringify(updatedWallets)}`
+    );
+    const updatedPool: Pool = {
+      ticker: pool.ticker,
+      bech32: pool.bech32,
+      wallets: updatedWallets,
+      supportingLeader,
+      queuePos: pool.queuePos,
+      allowedEpochs,
+      assignedEpochs: pool.assignedEpochs,
+    };
+    setPool(updatedPool);
+  });
 
   // if new epoch > last epoch
-
+  if (currentEpoch > lastEpoch) {
+  }
   // order by queue
 
   // check if leader has epoch >= current epoch

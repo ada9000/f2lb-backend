@@ -19,7 +19,7 @@ export async function getPools(): Promise<Pool[]> {
   return pools;
 }
 
-export async function addPool(pool: Pool) {
+export async function setPool(pool: Pool) {
   if (pool.bech32.slice(0, 4).match("pool")) {
     // add pool to db
     await redisSet(pool.bech32, JSON.stringify(pool));

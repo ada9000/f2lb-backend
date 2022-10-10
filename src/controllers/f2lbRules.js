@@ -5,22 +5,6 @@ const STATUS = {
   NOT_DELEGATED: 1,
 };
 
-function adaToLace(ada) {
-  return parseFloat(ada) * 1000000;
-}
-
-function laceToAda(lace) {
-  return parseFloat(lace) / 1000000.0;
-}
-
-async function addNewPool(poolId, stakeAddress) {
-  // TODO (also run for ANTRX)
-}
-
-async function addNewSupporter(alias, stakeAddress) {
-  // TODO
-}
-
 async function updateAllowedEpochs(pool, epoch) {
   var updatedPool = JSON.parse(JSON.stringify(pool));
   // get ada

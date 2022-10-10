@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 
 import { accountInfo, allCardanoPools, tip, poolMeta } from "../api/koios";
 import { epochsAllowed } from "../controllers/f2lb";
-import { addPool } from "../model/pools";
+import { setPool } from "../model/pools";
 import { addSupporter } from "../model/supporters";
 import { PoolFromGSheet, SupporterFromGSheet } from "../types/googleSheets";
 import { Pool, Supporter, Wallet } from "../types/gql";
@@ -47,6 +47,7 @@ export async function recoverCurrentSupporters() {
         lace: parseInt(foundWallet.total_balance),
         //@ts-ignore TODO: handle
         delegatedBech32: foundWallet.delegated_pool,
+        stakeAddr: foundWallet.stake_address,
       };
       wallets.push(wallet);
     });
@@ -154,8 +155,11 @@ export async function recoverCurrentPoolList() {
         lace: parseInt(account.total_balance),
         //@ts-ignore TODO: handle
         delegatedBech32: account.delegated_pool,
+        stakeAddr: account.stake_address,
       });
     });
+
+    console.log(JSON.stringify(wallets));
 
     const bech32 = p.poolId;
     const queuePos = p.queuePos;
@@ -196,12 +200,6 @@ export async function recoverCurrentPoolList() {
       assignedEpochs.push(index);
     }
 
-    console.log(
-      `${queuePos}:[${ticker}] has assigned epochs ${JSON.stringify(
-        assignedEpochs
-      )}`
-    );
-
     targetEpoch += allowedEpochs;
 
     pools.push({
@@ -216,7 +214,7 @@ export async function recoverCurrentPoolList() {
   }
 
   for (const pool of pools) {
-    await addPool(pool);
+    await setPool(pool);
   }
   console.log(`🏁 recover pool list finished`);
 }
