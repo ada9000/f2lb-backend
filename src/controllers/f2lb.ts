@@ -75,8 +75,8 @@ export async function update() {
 
   // filter out all wallets ids
   const bech32StakeAddresses: string[] = [];
-  await pools.forEach(async (pool) => {
-    await pool.wallets.forEach((wallet) => {
+  pools.forEach(async (pool) => {
+    pool.wallets.forEach((wallet) => {
       bech32StakeAddresses.push(wallet.stakeAddr);
     });
   });
