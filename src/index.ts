@@ -10,7 +10,11 @@ const { addResolversToSchema } = require("@graphql-tools/schema");
 const { initRedis } = require("./util/redis");
 const { resolvers } = require("./gql/resolvers");
 import { getPools } from "./model/pools";
-import { recoverCurrentPoolList } from "./util/recoverFromGoogleSheets";
+import { getSupporters } from "./model/supporters";
+import {
+  findSupporters,
+  recoverCurrentPoolList,
+} from "./util/recoverFromGoogleSheets";
 
 async function initServer() {
   console.log("Init cors");
@@ -96,9 +100,14 @@ initServer().then(() => {
   //update();
   (async () => {
     console.log("recover test");
-    await recoverCurrentPoolList();
-    const res = await getPools();
-    console.log(JSON.stringify(res));
+    await findSupporters();
+    console.log("\nsupporters");
+    const s = await getSupporters();
+    console.log(JSON.stringify(s));
+
+    //await recoverCurrentPoolList();
+    //const res = await getPools();
+    //console.log(JSON.stringify(res));
   })();
   //setInterval(update, 60000 * 15);
 });

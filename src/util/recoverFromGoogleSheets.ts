@@ -4,77 +4,67 @@ const dotenv = require("dotenv");
 import { accountInfo, allCardanoPools, epoch, poolMeta } from "../api/koios";
 import { epochsAllowed } from "../controllers/f2lb";
 import { addPool } from "../model/pools";
-import { PoolFromGSheet } from "../types/googleSheets";
-import { Pool, Wallet } from "../types/gql";
+import { addSupporter } from "../model/supporters";
+import { PoolFromGSheet, SupporterFromGSheet } from "../types/googleSheets";
+import { Pool, Supporter, Wallet } from "../types/gql";
 import { AccountInformation, PoolMetadata } from "../types/koios";
 import { hexToBech32, laceToAda } from "./utils";
 
-const koios = require("../api/koios");
 dotenv.config();
 const GOOGLE_API = process.env.GOOGLE_API;
 //const redis = require("../db/redis");
-const { updateAllowedEpochs } = require("../controllers/f2lbRules");
 
-/*
-async function findSupporters() {
-  console.log("Recovering supporters from googlesheet");
+// SCRAPE GOOGLE SHEET FOR SUPPORTERS
+export async function findSupporters() {
+  console.log("Recovering supporters from google sheet");
   const gSheetData = await axios(
     `https://sheets.googleapis.com/v4/spreadsheets/1-mA8vY0ZtzlVdH4XA5-J4nIZo4qFR_vFbnBFkpMLlYo/values/F2LB-Supporters?key=${GOOGLE_API}`
   ).then((res: any) => {
     return res.data.values.slice(1);
   });
-  console.log(gSheetData);
 
-  var supporters: any[] = [];
-
-  type a = {
-    alias: string;
-    bech32: string;
-  };
-  let tmp: a[] = [];
+  const gSheetSupporter: SupporterFromGSheet[] = [];
   for (let row in gSheetData) {
     const alias = gSheetData[row][0];
-    const bech32 = gSheetData[row][2];
-    console.log(alias, bech32);
-    tmp.push({ alias, bech32 });
+    const stakeAddrBech32 = gSheetData[row][2];
+    gSheetSupporter.push({ alias, stakeAddrBech32 });
   }
-  const hmm: any[] = [];
-  tmp.forEach((x) => {
-    hmm.push(x.bech32);
+  const bech32StakeAddresses: string[] = [];
+  gSheetSupporter.forEach((x) => {
+    bech32StakeAddresses.push(x.stakeAddrBech32);
   });
 
-  const accounts = await koios.accountInfo(hmm);
-  console.log(accounts);
+  const accounts = await accountInfo(bech32StakeAddresses);
 
-  await tmp.forEach(async (supporter) => {
-    const accInfo = accounts[supporter.bech32];
+  await gSheetSupporter.forEach(async (gSupporter) => {
+    const wallets: Wallet[] = [];
 
-    const laceAmount = parseInt(accInfo.total_balance);
-    const delegation = accInfo.delegated_pool;
-    //@ts-ignore
-    const delegationTicker = await koios.poolMeta(delegation).then((res) => {
-      return res[0].meta_json.ticker;
+    const foundWallets = accounts.filter((x) =>
+      x.stake_address.match(gSupporter.stakeAddrBech32)
+    );
+    await foundWallets.forEach((foundWallet) => {
+      const wallet: Wallet = {
+        lace: foundWallet.total_balance,
+        delegatedBech32: foundWallet.delegated_pool,
+      };
+      wallets.push(wallet);
     });
-    const supporterInfo = {
-      alias: supporter.alias,
-      status: 0,
-      wallet: {
-        stakeAddress: supporter.bech32,
-        amount: laceAmount,
-        delegation: delegation,
-        delegationTicker: delegationTicker,
-      },
+
+    const supporter: Supporter = {
+      supportingLeader: false,
+      alias: gSupporter.alias,
+      wallets: wallets,
     };
     console.log(
-      `adding supporter ${supporter.alias} with wallet ${laceAmount}`
+      `\n[${gSupporter.alias}]adding supporter ${JSON.stringify(
+        supporter
+      )} with ${gSupporter.stakeAddrBech32}`
     );
-    supporters.push(supporterInfo);
+    await addSupporter(supporter);
   });
-
-  //@ts-ignore
-  redis.set("supporters", JSON.stringify(supporters));
 }
-*/
+
+// SCRAPE GOOGLE SHEET FOR POOLS
 export async function recoverCurrentPoolList() {
   console.log(`recoverCurrentPoolList`);
   const currentPoolIndex = 14;

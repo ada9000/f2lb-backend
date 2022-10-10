@@ -1,5 +1,7 @@
 import { laceToAda } from "../util/utils";
 
+export async function updateList() {}
+
 export async function epochsAllowed(lace: number) {
   const ada = laceToAda(lace.toString());
   let epochsGranted = 0;

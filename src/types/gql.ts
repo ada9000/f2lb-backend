@@ -18,6 +18,6 @@ export type Pool = {
 
 export type Wallet = {
   lace: number;
-  delegatedBech32: String;
-  ticker?: String;
+  delegatedBech32: string;
+  ticker?: string;
 };
