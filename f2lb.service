@@ -1,0 +1,12 @@
+[Unit]
+Description=f2lb
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=30
+ExecStart=/home/jack/dev/f2lb-backend/start.sh
+WorkingDirectory=/home/jack/dev/f2lb-backend
+
+[Install]
+WantedBy=multi-user.target
