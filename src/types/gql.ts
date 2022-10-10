@@ -11,6 +11,7 @@ export type Pool = {
   description?: string;
   website?: string;
   imageUrl?: string;
+  queuePos: number;
   allowedEpochs: number;
   assignedEpochs: number[];
   wallets: Wallet[];

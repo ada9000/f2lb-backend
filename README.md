@@ -22,7 +22,6 @@ Ensure you have met the requirements.
 
 # Notes
 
-- To get data from current f2lb use the command `node scripts/googlesheetsToJson.js` (I plan to deprecate this ASAP)
 - Due to the use of a google sheet we need to use a google API key to scrape the data
 
 # TODO

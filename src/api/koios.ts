@@ -29,9 +29,9 @@ export async function allCardanoPools(
       if (res.data.length > 0) {
         //@ts-ignore
         data.push(...res.data);
-        console.log(
-          `GET https://api.koios.rest/api/v0/pool_list?offset=${offset}&limit=${limit}`
-        );
+        // console.log(
+        //   `GET https://api.koios.rest/api/v0/pool_list?offset=${offset}&limit=${limit}`
+        // );
         return allCardanoPools(offset + limit, data);
       }
       return data;
@@ -67,7 +67,6 @@ export async function accountInfo(
       return res.data;
     })
     .catch((e: any) => {
-      console.log(e);
-      throw `koios account info issue with ${bech32StakeAddresses}`;
+      throw new Error(`koios account info issue with ${bech32StakeAddresses}`);
     });
 }

@@ -1,14 +1,14 @@
 export type AccountInformation = {
   stake_address: string;
-  status: string;
-  delegated_pool: string;
-  total_balance: number;
-  utxo: number;
-  rewards: number;
-  withdrawals: number;
-  rewards_available: number;
-  reserves: number;
-  treasury: number;
+  status: "registered" | "not registered";
+  delegated_pool: string | null;
+  total_balance: string;
+  utxo: string;
+  rewards: string;
+  withdrawals: string;
+  rewards_available: string;
+  reserves: string;
+  treasury: string;
 };
 
 export type PoolMetadata = {

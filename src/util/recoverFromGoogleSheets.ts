@@ -15,8 +15,8 @@ const GOOGLE_API = process.env.GOOGLE_API;
 //const redis = require("../db/redis");
 
 // SCRAPE GOOGLE SHEET FOR SUPPORTERS
-export async function findSupporters() {
-  console.log("Recovering supporters from google sheet");
+export async function recoverCurrentSupporters() {
+  console.log("⏱️  recovering supporters from google sheet");
   const gSheetData = await axios(
     `https://sheets.googleapis.com/v4/spreadsheets/1-mA8vY0ZtzlVdH4XA5-J4nIZo4qFR_vFbnBFkpMLlYo/values/F2LB-Supporters?key=${GOOGLE_API}`
   ).then((res: any) => {
@@ -44,7 +44,8 @@ export async function findSupporters() {
     );
     await foundWallets.forEach((foundWallet) => {
       const wallet: Wallet = {
-        lace: foundWallet.total_balance,
+        lace: parseInt(foundWallet.total_balance),
+        //@ts-ignore TODO: handle
         delegatedBech32: foundWallet.delegated_pool,
       };
       wallets.push(wallet);
@@ -55,18 +56,14 @@ export async function findSupporters() {
       alias: gSupporter.alias,
       wallets: wallets,
     };
-    console.log(
-      `\n[${gSupporter.alias}]adding supporter ${JSON.stringify(
-        supporter
-      )} with ${gSupporter.stakeAddrBech32}`
-    );
     await addSupporter(supporter);
   });
+  console.log(`🏁 recover supporters finished`);
 }
 
 // SCRAPE GOOGLE SHEET FOR POOLS
 export async function recoverCurrentPoolList() {
-  console.log(`recoverCurrentPoolList`);
+  console.log(`⏱️  recoverCurrentPoolList`);
   const currentPoolIndex = 14;
   const pools: Pool[] = new Array();
 
@@ -88,9 +85,10 @@ export async function recoverCurrentPoolList() {
   // scrape google sheet
   const poolFromGSheet: PoolFromGSheet[] = [];
   await gSheetData.forEach((entry: any) => {
-    const tmpTicker = entry[2];
-    const stakeKey = entry[8];
-    const allowedEpochs = entry[4];
+    const queuePos = parseInt(entry[1]);
+    const tmpTicker = entry[3];
+    const stakeKey = entry[9];
+    const allowedEpochs = parseInt(entry[5]);
     const bech32 = hexToBech32(stakeKey);
     if (!bech32) {
       throw new Error(
@@ -105,9 +103,9 @@ export async function recoverCurrentPoolList() {
       if (!poolId) {
         throw new Error(`bech32 pool id required '${tmpTicker}'`);
       }
-    } else if (entry[11].length >= 56) {
+    } else if (entry[12].length >= 56) {
       // handle edge case of Koios
-      poolId = entry[11];
+      poolId = entry[12];
     } else {
       throw new Error(`Missing pool id for ${tmpTicker}`);
     }
@@ -117,6 +115,7 @@ export async function recoverCurrentPoolList() {
       allowedEpochs,
       bech32,
       poolId,
+      queuePos,
     });
   });
 
@@ -136,7 +135,6 @@ export async function recoverCurrentPoolList() {
   const poolWallets = await accountInfo(stakeBech32Ids);
 
   await poolFromGSheet.forEach(async (p) => {
-    console.log(`Building data for [${p.tmpTicker}]`);
     const metadata: PoolMetadata[] = poolMetadata.filter((x) =>
       x.pool_id_bech32.match(p.poolId)
     );
@@ -148,25 +146,22 @@ export async function recoverCurrentPoolList() {
     const wallets: Wallet[] = new Array();
     var totalLace = 0;
     accountInfo.forEach((account) => {
-      totalLace += account.total_balance;
+      totalLace += parseInt(account.total_balance);
       wallets.push({
-        lace: account.total_balance,
+        lace: parseInt(account.total_balance),
+        //@ts-ignore TODO: handle
         delegatedBech32: account.delegated_pool,
       });
     });
 
     const bech32 = p.poolId;
+    const queuePos = p.queuePos;
 
     const ticker = metadata[0]?.meta_json?.ticker
       ? metadata[0].meta_json.ticker
       : p.tmpTicker;
     const allowedEpochs = await epochsAllowed(totalLace);
     const assignedEpochs = [0];
-    console.log(
-      `[${ticker}] -> ${bech32}, ${allowedEpochs}, ${assignedEpochs}, ${JSON.stringify(
-        wallets
-      )}`
-    );
 
     pools.push({
       supportingLeader: false,
@@ -175,17 +170,12 @@ export async function recoverCurrentPoolList() {
       allowedEpochs,
       assignedEpochs,
       wallets,
+      queuePos,
     });
   });
 
-  console.log(`pools ${Object.keys(pools)}`);
   for (const pool of pools) {
     await addPool(pool);
-    console.log(
-      `Added pool [${pool.ticker}] with '${laceToAda(
-        pool?.wallets[0]?.lace.toString()
-      )} ada' to db`
-    );
   }
-  console.log("finished recoverCurrentPoolList()");
+  console.log(`🏁 recover pool list finished`);
 }

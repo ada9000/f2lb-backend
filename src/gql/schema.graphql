@@ -16,13 +16,14 @@ type Pool {
   description: String
   website: String
   imageUrl: String
+  queuePos: Int!
   allowedEpochs: Int!
   assignedEpochs: [Int]!
   wallets: [Wallet]!
 }
 
 type Wallet {
-  lace: Int!
+  lace: String!
   stakeAddr: String!
   delegatedBech32: String!
   ticker: String

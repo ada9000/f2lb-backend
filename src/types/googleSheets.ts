@@ -3,6 +3,7 @@ export type PoolFromGSheet = {
   allowedEpochs: number;
   bech32: string;
   poolId: string;
+  queuePos: number;
 };
 
 export type SupporterFromGSheet = {
