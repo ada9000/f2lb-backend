@@ -7,10 +7,10 @@ import {
 
 const { default: axios } = require("axios");
 
-export async function epoch(): Promise<Tip> {
+export async function tip(): Promise<Tip> {
   return await axios(`https://api.koios.rest/api/v0/tip`)
     .then((res: any) => {
-      return res.data[0].epoch_no;
+      return res.data[0];
     })
     .catch((e: any) => {
       throw "koios epoch";

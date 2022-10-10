@@ -1,7 +1,7 @@
 const axios = require("axios");
 const dotenv = require("dotenv");
 
-import { accountInfo, allCardanoPools, epoch, poolMeta } from "../api/koios";
+import { accountInfo, allCardanoPools, tip, poolMeta } from "../api/koios";
 import { epochsAllowed } from "../controllers/f2lb";
 import { addPool } from "../model/pools";
 import { addSupporter } from "../model/supporters";
@@ -67,7 +67,6 @@ export async function recoverCurrentPoolList() {
   const currentPoolIndex = 14;
   const pools: Pool[] = new Array();
 
-  var targetEpoch = (await epoch()).epoch_no;
   const allPools = await allCardanoPools();
   const tickers: string[] = [];
   allPools.forEach((x) => {
@@ -134,7 +133,11 @@ export async function recoverCurrentPoolList() {
   const poolMetadata = await poolMeta(poolBech32Ids);
   const poolWallets = await accountInfo(stakeBech32Ids);
 
-  await poolFromGSheet.forEach(async (p) => {
+  let targetEpoch = parseInt((await tip()).epoch_no);
+
+  for (const idx in poolFromGSheet) {
+    //await poolFromGSheet.forEach(async (p) => {
+    const p = poolFromGSheet[idx];
     const metadata: PoolMetadata[] = poolMetadata.filter((x) =>
       x.pool_id_bech32.match(p.poolId)
     );
@@ -160,8 +163,32 @@ export async function recoverCurrentPoolList() {
     const ticker = metadata[0]?.meta_json?.ticker
       ? metadata[0].meta_json.ticker
       : p.tmpTicker;
-    const allowedEpochs = await epochsAllowed(totalLace);
-    const assignedEpochs = [0];
+
+    var allowedEpochs = await epochsAllowed(totalLace);
+
+    // TODO: REMOVE ONE EPOCH - due to epochsAllowed not accounting for last past epoch on first pool in queue
+    if (p.tmpTicker.match("T2H")) {
+      allowedEpochs -= 1;
+    }
+    // TODO: ABOVE
+
+    const assignedEpochs: number[] = new Array();
+
+    for (
+      let index = targetEpoch;
+      index < targetEpoch + allowedEpochs;
+      index++
+    ) {
+      assignedEpochs.push(index);
+    }
+
+    console.log(
+      `${queuePos}:[${ticker}] has assigned epochs ${JSON.stringify(
+        assignedEpochs
+      )}`
+    );
+
+    targetEpoch += allowedEpochs;
 
     pools.push({
       supportingLeader: false,
@@ -172,7 +199,7 @@ export async function recoverCurrentPoolList() {
       wallets,
       queuePos,
     });
-  });
+  }
 
   for (const pool of pools) {
     await addPool(pool);
