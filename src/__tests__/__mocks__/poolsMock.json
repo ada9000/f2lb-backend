@@ -1,0 +1,482 @@
+[
+  {
+    "ticker": "T2H",
+    "bech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uy7df42mej2k6whe6ypzpf4auqka050nx2v9hhqc7kat74g4rju0q",
+        "lace": 5073553254,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 0,
+    "allowedEpochs": 1,
+    "assignedEpochs": [368]
+  },
+  {
+    "ticker": "AHOLY",
+    "bech32": "pool1d5lk27jlkaj6dx7ndexjzmdqtt5hnnpx5224awz83ye0v28ve42",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uyhchftajk9h2ke00t2r9ezw9hjtwsjwuutf4rpy3rt2t2cseml8w",
+        "lace": 11787501879,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 1,
+    "allowedEpochs": 3,
+    "assignedEpochs": [369, 370, 371]
+  },
+  {
+    "ticker": "HIGH",
+    "bech32": "pool1tay8z4sq4a4gmyhnygyt0t5j84z8epwjra06wq28jnnmschkkuu",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uxxh72etmprlm5eu99eafx4d32e60z2w4d55pgvahyzrt7ce2pxm5",
+        "lace": 10292545307,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 2,
+    "allowedEpochs": 3,
+    "assignedEpochs": [372, 373, 374]
+  },
+  {
+    "ticker": "ATFF",
+    "bech32": "pool1lkuwrel3s8er6v0snw69gumsaugydz9n0vl87n7mygh576mwcy0",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u9q0cardrwdh7tfdfh7cq9xrgec6ldd2xt09j5u70h7zm7qlm5zfl",
+        "lace": 5335150762,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 3,
+    "allowedEpochs": 2,
+    "assignedEpochs": [375, 376]
+  },
+  {
+    "ticker": "UAE",
+    "bech32": "pool1e6z3jnnvu9zqxlk60hkfjym2vj3mvgysy6h8l2xxyj5j220vlsd",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u90f2fv2lgc6uct7zkgzuwp7gdjdysp305930fa63xrlm5gwz76a6",
+        "lace": 4511140356,
+        "delegatedBech32": "pool1jug4sp78wkx4fd90vh2ljaq5xqvv6kksjg4ckz7c68ga6fllyvu"
+      }
+    ],
+    "supportingLeader": false,
+    "queuePos": 4,
+    "allowedEpochs": 2,
+    "assignedEpochs": [377, 378]
+  },
+  {
+    "ticker": "TCATL",
+    "bech32": "pool1gduk8s5stt3uej5nl9vs7marx8jjyeadwz3505gzvuqey2lch35",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uxhl7e00050v7252mxg0020a5aux0jlp5646ekgrmtce9mq4zruep",
+        "lace": 3254357054,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 5,
+    "allowedEpochs": 2,
+    "assignedEpochs": [379, 380]
+  },
+  {
+    "ticker": "SMACH",
+    "bech32": "pool1l6946mnu54f6v0we4xzra8kwm68ch7fphhxvgytd0m4lzk3pats",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uyqqc72qjc52zvhhtwa94n9wks4qrel7x05hqx3eptf67yq46zjf9",
+        "lace": 13467259614,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 6,
+    "allowedEpochs": 3,
+    "assignedEpochs": [381, 382, 383]
+  },
+  {
+    "ticker": "SPKL",
+    "bech32": "pool10q33p4hx4wqum6thmglw7z5l2vaay4w6m5cdq8fnurw7vjdppcf",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u8m4fzym8nzj8wak6qyuy5j9ex46rl0zkjsgewtk3xkrm8csamrl9",
+        "lace": 10296855657,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 7,
+    "allowedEpochs": 3,
+    "assignedEpochs": [384, 385, 386]
+  },
+  {
+    "ticker": "SASP",
+    "bech32": "pool1y6gjnv4qqzwt8ctsf45f36a8vqn7wrlcvnmcft9drfjrgs2shaq",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u82vt6wn9q95zdflhgtkua0jrvjk3r59chlkjd46dmmmz9cfrh333",
+        "lace": 13018784386,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 8,
+    "allowedEpochs": 3,
+    "assignedEpochs": [387, 388, 389]
+  },
+  {
+    "ticker": "PREEB",
+    "bech32": "pool19peeq2czwunkwe3s70yuvwpsrqcyndlqnxvt67usz98px57z7fk",
+    "wallets": [
+      {
+        "stakeAddr": "stake1ux0636uasyuwfpzhrf8907cp8t6dakvq7lr67ckwfewmu8sq5ryxf",
+        "lace": 10898278132,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 9,
+    "allowedEpochs": 3,
+    "assignedEpochs": [390, 391, 392]
+  },
+  {
+    "ticker": "FRESH",
+    "bech32": "pool16xpa8km92m0cq9unn84cezy8ygl2mr90t5qvvauswfm9yqyj524",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uyly75m3hehs8632av99e2vg8husajv8cclfnqlljdj3pvcg2ay3n",
+        "lace": 3106179359,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 10,
+    "allowedEpochs": 2,
+    "assignedEpochs": [393, 394]
+  },
+  {
+    "ticker": "AVA",
+    "bech32": "pool1fl0gdfcmzg4jf3hw839epdteuazm23nff44vddap00r0sm5gvvk",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u8st76wz4vkup5ysgrkdhr5ywtq0032wsdwqwljcwvqf0hsvwxejh",
+        "lace": 10299875325,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 11,
+    "allowedEpochs": 3,
+    "assignedEpochs": [395, 396, 397]
+  },
+  {
+    "ticker": "TAPC",
+    "bech32": "pool1j4nkshfytq8tww99ttfwvrmv8n7yq2tvuw0xlphelzzw6vfghwq",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u8q96w0zwgvqh8aydu7qj9yr73evkd7txzfvp2fftwyt95q7lacc6",
+        "lace": 6173624733,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 12,
+    "allowedEpochs": 2,
+    "assignedEpochs": [398, 399]
+  },
+  {
+    "ticker": "STPZ1",
+    "bech32": "pool17gvd032slmxg267lp8rwcykkfa52txm8ylefhmdsdkytzugrtaw",
+    "wallets": [
+      {
+        "stakeAddr": "stake1ux32s85x3kxexxyw88y48n0zzn06uxdv55th37gy8rs05vgavtmu4",
+        "lace": 3047185994,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 13,
+    "allowedEpochs": 2,
+    "assignedEpochs": [400, 401]
+  },
+  {
+    "ticker": "CBH",
+    "bech32": "pool1cspe7naf0mtntwyysqxk6czah3jlh6v4cja8pdfju932yxsehnm",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u93kdr7gufv3a9h3dlntha6ms6d6qzgfwk6ujnt3mghs5uqv5ln3g",
+        "lace": 3060474084,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 14,
+    "allowedEpochs": 2,
+    "assignedEpochs": [402, 403]
+  },
+  {
+    "ticker": "RUBY",
+    "bech32": "pool19seeqvu6hfr3qru6kx3rp4khymssa82j00jfm3d6k3ua590wdwv",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u9fmfdxlkfrfvaqnpg8gv5v68l7vmxgmywtvpl6h25a9v3cl7htw4",
+        "lace": 6079721827,
+        "delegatedBech32": "pool1qsxhnvr03tg6jj7cl0y74jd63n85fgejm8tlqq7ct7fexfygkye"
+      }
+    ],
+    "supportingLeader": false,
+    "queuePos": 15,
+    "allowedEpochs": 2,
+    "assignedEpochs": [404, 405]
+  },
+  {
+    "ticker": "STAYK",
+    "bech32": "pool1l4synes9s3swlf5r5rsfpede3582r4km2wd94xctceyaudv9zx3",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u9ysk07nvsd77wv5v7n6kfv5ghcmdm8aym5fh5kytclhyeg4ay2vj",
+        "lace": 3550242281,
+        "delegatedBech32": "pool1qsxhnvr03tg6jj7cl0y74jd63n85fgejm8tlqq7ct7fexfygkye"
+      }
+    ],
+    "supportingLeader": false,
+    "queuePos": 16,
+    "allowedEpochs": 2,
+    "assignedEpochs": [406, 407]
+  },
+  {
+    "ticker": "9000",
+    "bech32": "pool1fu6ppur5uumrpydpeswzrvfg4epr68xw39aar9rcu56tk5ukat3",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uxh85e3y330pj3fx8y8dgje94pam5zklj9x3zaxz6fztqmq03a8jr",
+        "lace": 3055260921,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 17,
+    "allowedEpochs": 2,
+    "assignedEpochs": [408, 409]
+  },
+  {
+    "ticker": "MTSK",
+    "bech32": "pool1f6ltd3rd3e69klr32r0xw7h59lc76lhc9l705d380lj76d926du",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u8890rjfhjfxaarv0c6dzgvyt5ug95763d5d5slqjd75zvgswz3ey",
+        "lace": 1803237068,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 18,
+    "allowedEpochs": 1,
+    "assignedEpochs": [410]
+  },
+  {
+    "ticker": "EZPZ",
+    "bech32": "pool1msu99d564nlvplp8dcvhrupl5ducflzqk4lmjazpcw8nu7znftq",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uxxzys2j7v46mxdwg4ud586nuqv0qp3uwav6wdaxprpt67gpdkuul",
+        "lace": 3038511198,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 19,
+    "allowedEpochs": 2,
+    "assignedEpochs": [411, 412]
+  },
+  {
+    "ticker": "ANTRX",
+    "bech32": "pool13vc4ekwpky5vtnl8pyj60phkmwtv7gsthn4g525udt7mjycs85v",
+    "wallets": [
+      {
+        "stakeAddr": "stake1ux6rvx9s4vfq0paz0j7a7alusxmpyd7x7sfxd5r7e6cd44czp5c7l",
+        "lace": 1052751578,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 20,
+    "allowedEpochs": 1,
+    "assignedEpochs": [413]
+  },
+  {
+    "ticker": "ANEW",
+    "bech32": "pool16lwqfp7cpvzwn6mhu0gj3h4aa5k6j9my0he4mgjjva5f7vvnkw2",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uyvyhalpfcfg60f88s0a29c4zzw7tze9pgc8k5pwdhk5gjgez4vq2",
+        "lace": 10057801922,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 21,
+    "allowedEpochs": 3,
+    "assignedEpochs": [414, 415, 416]
+  },
+  {
+    "ticker": "JED",
+    "bech32": "pool1mukzsec605hfk2tsx4r4xd2rjfjytua8puge5pa0g82rgqm0kt9",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u9qmm8fpmqrhlvvaesak9hlvqu7uqswmslcmcvflydxny5cmwgc2l",
+        "lace": 4639505333,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 22,
+    "allowedEpochs": 2,
+    "assignedEpochs": [417, 418]
+  },
+  {
+    "ticker": "CSK",
+    "bech32": "pool175gxtzacpcm90adjpvlhjmfpj4ft2a3zuqsgm558hf3q7ra2vf9",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u98de88v3mhx59mgw9gtnhr0khwggpk5c4v5dh853lhxhtcx7ytry",
+        "lace": 3034894739,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 23,
+    "allowedEpochs": 2,
+    "assignedEpochs": [419, 420]
+  },
+  {
+    "ticker": "ZEBRA",
+    "bech32": "pool16sm29hg3qrk5lyp74qcljt38l86v5zvg95395h9gqrn6qe97d9z",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uyvfzvd7v3xenq2pqfdkga3yuqt0ququ808xn0lhtrjh90crdsgca",
+        "lace": 1000185735,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 24,
+    "allowedEpochs": 1,
+    "assignedEpochs": [421]
+  },
+  {
+    "ticker": "MAPLE",
+    "bech32": "pool1xpfe5q3v3axrjdc8h38taaa93frq3m9pfewxk46x4r6jgy2yj5n",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u9f2v9drvgcqg037uqt6k5k0ep8t4c73u4yp3r2t5l87c5chp6dgz",
+        "lace": 5936154922,
+        "delegatedBech32": "pool1qsxhnvr03tg6jj7cl0y74jd63n85fgejm8tlqq7ct7fexfygkye"
+      }
+    ],
+    "supportingLeader": false,
+    "queuePos": 25,
+    "allowedEpochs": 2,
+    "assignedEpochs": [422, 423]
+  },
+  {
+    "ticker": "ASTCH",
+    "bech32": "pool1q2fh3cl6rx0wv5gry4qx5l4h65qpjf7x99xmq66nqj2fj5g6u9z",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uxqgejqgy637twzxyg0am8xg6pw0cwfqr52ktw3ph6s7justlpklq",
+        "lace": 3017661524,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 26,
+    "allowedEpochs": 2,
+    "assignedEpochs": [424, 425]
+  },
+  {
+    "ticker": "BEEHI",
+    "bech32": "pool1wp7vqk4mkx0w0wxzpy8avhft4qwcg60xldwem2uh9n4pw777fhz",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uytvnvqyxzfddq8wkc03lphd52wvq0tnsw37wg3pwxhkz8s4xul24",
+        "lace": 1044508222,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 27,
+    "allowedEpochs": 1,
+    "assignedEpochs": [426]
+  },
+  {
+    "ticker": "LAKCV",
+    "bech32": "pool1w728ekz4fs2f33qmqf7047hvwsmarjrv5l575ncnh7hkc0zdhgz",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u9ekjfn60vr40eeswh0tn9yr2j5u26mmzgwc6hzvtysl6sqezzc9m",
+        "lace": 4573262220,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 28,
+    "allowedEpochs": 2,
+    "assignedEpochs": [427, 428]
+  },
+  {
+    "ticker": "SPO",
+    "bech32": "pool1qhedx7fa6vyj7c2xj9jx0fjlswegnr4s4prs6kcshm0rsthj38k",
+    "wallets": [
+      {
+        "stakeAddr": "stake1uxps9x0j6e96a06er20rg405merqzcr68mgptfe86cmaryg3cef06",
+        "lace": 1006016670,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 29,
+    "allowedEpochs": 1,
+    "assignedEpochs": [429]
+  },
+  {
+    "ticker": "AYMAN",
+    "bech32": "pool1jug4sp78wkx4fd90vh2ljaq5xqvv6kksjg4ckz7c68ga6fllyvu",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u9zd9maxnh6lqqdckmw32zqrkf92ml7gl9mkp5n8qvjh6kqruqm4g",
+        "lace": 10410016770,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 30,
+    "allowedEpochs": 3,
+    "assignedEpochs": [430, 431, 432]
+  },
+  {
+    "ticker": "BRNS",
+    "bech32": "pool1qsxhnvr03tg6jj7cl0y74jd63n85fgejm8tlqq7ct7fexfygkye",
+    "wallets": [
+      {
+        "stakeAddr": "stake1u8ms7ldpd7qkql8q6cagpusvhfpk3wmqzm9gauq8nt6q07qss896d",
+        "lace": 40644333152,
+        "delegatedBech32": "pool1zkuqlvymj4q6y7r20hd8c5tp0ru6emcca7wf34c5dawjukusvzr"
+      }
+    ],
+    "supportingLeader": true,
+    "queuePos": 31,
+    "allowedEpochs": 4,
+    "assignedEpochs": [433, 434, 435, 436]
+  }
+]
