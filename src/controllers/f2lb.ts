@@ -4,52 +4,8 @@ import { getEpoch } from "../model/state";
 import { Pool, Wallet } from "../types/gql";
 import { laceToAda } from "../util/utils";
 
-/*
-async function update() {
-  try {
-    // get pool list from redis
-    const poolList = JSON.parse(await redis.get("pools"));
-    // get epoch
-    var epoch = await redis.get("epoch");
-    if (!epoch) {
-      epoch = await koios.epoch();
-      redis.set("epoch", epoch);
-      console.log(`epoch missing updated it to '${epoch}'`);
-    }
-    // get all pool objects (as 'pools' is just a list of reference strings)
-    var pools = [];
-    const leader = JSON.parse(await redis.get(poolList[0]));
-    for (idx in poolList) {
-      const pool = JSON.parse(await redis.get(poolList[idx]));
-      const updatedPool = await f2lb.updateStatus(pool, leader);
-      pools.push(updatedPool);
-    }
-    // update pool list and then reflect changes in redis
-    const updatedPools = await f2lb.update(pools, epoch);
-    for (idx in updatedPools) {
-      const poolId = updatedPools[idx].poolIdBech32;
-      redis.set(poolId, JSON.stringify(updatedPools[idx]));
-    }
-    // update epoch in db if nec
-    const currentEpoch = await redis.get("epoch");
-    const actualEpoch = await koios.epoch();
-
-    if (actualEpoch !== currentEpoch) {
-      await redis.set("epoch", actualEpoch);
-      console.log(`epoch '${currentEpoch} -> '${actualEpoch}'`);
-    }
-    // log success / force save
-    await redis.save();
-    const time = new Date().toISOString();
-    console.log(`updated list at '${time}'`);
-  } catch (e) {
-    const time = new Date().toISOString();
-    console.log(`${time} failed to update due to ${e}`);
-  }
-}*/
-
 export async function update() {
-  console.log(`⏱️ update started at ${new Date().toLocaleString()}`);
+  console.log(`⏱️ update started at ${new Date().toISOString()}`);
 
   // TODO: ! update list again...
 
@@ -82,7 +38,8 @@ export async function update() {
   });
 
   // update each pools wallets information
-  await pools.forEach(async (pool) => {
+  for (const idx in pools) {
+    const pool = pools[idx];
     let total_lace = 0;
     let supportingLeader = false;
     // update wallets
@@ -128,20 +85,36 @@ export async function update() {
       assignedEpochs: pool.assignedEpochs,
     };
     setPool(updatedPool);
-  });
+  }
 
   // if new epoch > last epoch
   if (currentEpoch > lastEpoch) {
+    await recalculateQueue(currentEpoch);
   }
-  // order by queue
 
-  // check if leader has epoch >= current epoch
-  // if no
-  // update queue so leader is last
+  console.log(`🏁 update finished at ${new Date().toISOString()}`);
+}
+
+async function recalculateQueue(currentEpoch: number) {
+  console.log(`🫠 queue recalculation`);
+  // order by queue
+  const pools = await getPools();
+  const poolsByDescPoolPos = pools.sort((a, b) => b.queuePos - a.queuePos);
+
+  for (const index in poolsByDescPoolPos) {
+    const idx = parseInt(index);
+    if (idx === poolsByDescPoolPos.length - 1) {
+      // on pool leader
+    }
+    const pool = poolsByDescPoolPos[idx];
+  }
+
+  // reassign queue pos based on index ALSO reassign epochs
+
+  //
 
   // rebase queue based on supporting leader tag
-
-  console.log(`🏁 update finished at ${new Date().toLocaleString()}`);
+  console.log(`🫠 queue recalculation finished`);
 }
 
 export async function epochsAllowed(
